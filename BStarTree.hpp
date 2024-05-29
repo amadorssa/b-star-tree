@@ -7,22 +7,25 @@ template<typename T>
 class BStarTree
 {
 
-    public:
+public:
 
-        BStarTree(int o);
-        ~BStarTree();
-        BStarTree(const BStarTree& t);
-        BStarTree& operator=(const BStarTree& t);
+    BStarTree(int o);
+    ~BStarTree();
+    BStarTree(const BStarTree& t);
+    BStarTree& operator=(const BStarTree& t);
 
-        void add(T v);
-        void Delete(T v);
-        bool isEmpty() const;
-        void empty();
-        void print() const;
-        void printBackwards() const;
-        void printByLevels() const;
+    void add(T v);
+    void Delete(T v);
+    bool isEmpty() const;
+    void empty();
+    void print() const;
+    void printBackwards() const;
+    void printByLevels() const;
+    bool search(T value) const;
+    
+    
 
-    private://attributes
+private://attributes
 
     int order;
     struct Node
@@ -38,14 +41,15 @@ class BStarTree
     Node *root;
     int numNodes;
 
-    private://methods
+private://methods
 
-        void add(const T& v, Node*& subRoot);
-        void print(Node* subRoot) const;
-        void printBackwards(Node* subRoot) const;
-        void empty(Node*& subRoot);
+    void add(const T& v, Node*& subRoot);
+    void print(Node* subRoot) const;
+    void printBackwards(Node* subRoot) const;
+    void empty(Node*& subRoot);
     void Delete(T v, Node*& subRoot);    
     bool isFull(const Node*& subRoot) const;
+    bool search(T& value, const Node *& subRoot) const;
 
 };
 

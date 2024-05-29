@@ -1,165 +1,143 @@
 #include "BStarTree.hpp"
 
-template<typename T>
-BStarTree<T>::BStarTree(int o): root(nullptr), numNodes(0),order(o) {};
-/********************************************************/
-template<typename T>
-BStarTree<T>::~BStarTree()
-{
-    empty();
-}
-/********************************************************/
-template<typename T>
-BStarTree<T>::BStarTree(const BStarTree<T>& t): numNodes(0), root(nullptr)
-{
-    *this=t;
-}
-/********************************************************/
-template<typename T>
-BStarTree<T>& BStarTree<T>::operator=(const BStarTree<T>& t)
-{
+template <typename T>
+BStarTree<T>::BStarTree(int o) : root(nullptr), numNodes(0), order(o){};
 
-}
 /********************************************************/
-template<typename T>
-void BStarTree<T>::add(T v)
-{
-    add(v,root);
-}
+template <typename T> BStarTree<T>::~BStarTree() { empty(); }
+
 /********************************************************/
-template<typename T>
-bool BStarTree<T>::isEmpty() const
-{
-    return root==nullptr;
+template <typename T>
+BStarTree<T>::BStarTree(const BStarTree<T> &t) : numNodes(0), root(nullptr) {
+    *this = t;
 }
+
 /********************************************************/
-template<typename T>
-void BStarTree<T>::empty()
-{
-    empty(root);
+template <typename T>
+BStarTree<T> &BStarTree<T>::operator=(const BStarTree<T> &t) {}
+
+/********************************************************/
+template <typename T> void BStarTree<T>::add(T v) { add(v, root); }
+
+/********************************************************/
+template <typename T> bool BStarTree<T>::isEmpty() const {
+    return root == nullptr;
 }
+
 /********************************************************/
-template<typename T>
-void BStarTree<T>::Delete(T v)
-{
-    Delete(v,root);
-}
+template <typename T> void BStarTree<T>::empty() { empty(root); }
+
 /********************************************************/
-template<typename T>
-void BStarTree<T>::print() const
-{
-    print(root);
-}
+template <typename T> void BStarTree<T>::Delete(T v) { Delete(v, root); }
+
 /********************************************************/
-template<typename T>
-void BStarTree<T>::printBackwards() const
-{
+template <typename T> void BStarTree<T>::print() const { print(root); }
+
+/********************************************************/
+template <typename T> void BStarTree<T>::printBackwards() const {
     printBackwards(root);
 }
 
 /********************************************************/
-template<typename T>
-void BStarTree<T>::printByLevels() const
-{
-    
-}
-
-
+template <typename T> void BStarTree<T>::printByLevels() const {}
 
 /********************************************************/
-//PRIVATE METHODS
+// PRIVATE METHODS
 /********************************************************/
 
-
-
-
 /********************************************************/
-template<typename T>
-void BStarTree<T>::add(const T& v, Node*& subRoot)
-{
-    if(!subRoot->isLeaf()){
+template <typename T> void BStarTree<T>::add(const T &v, Node *&subRoot) {
+    if (!subRoot->isLeaf()) {
         int size = subRoot->values.getSize(), aux;
-        for(int i =  0; i < size; ++i){
+        for (int i = 0; i < size; ++i) {
             aux = subRoot->values[i];
-            if(aux == v) return; // The value already exists.
-            if(aux < v){
+            if (aux == v)
+                return; // The value already exists.
+            if (aux < v) {
                 add(v, subRoot->children[i]); // Explore the way. Recursive.
-                break;  
-            } 
+                break;
+            }
         }
-        
-    }else{
-        if(!subRoot->isFull())
+
+    } else {
+        if (!subRoot->isFull())
             subRoot->values.add(v); // If the node isnt full , just add.
-        else{
+        else {
             Node *aux = subRoot->getLeftSibling();
-            if(aux != nullptr && !isFull(aux)){
+            if (aux != nullptr && !isFull(aux)) {
                 rotateLeft(subRoot);
-            }else{
+            } else {
                 aux = subRoot->getRightSibling();
-                if(aux != nullptr && !isFull(aux)){
+                if (aux != nullptr && !isFull(aux)) {
                     rotateRight(subRoot);
-                }else{
+                } else {
                     split(subRoot);
                 }
             }
-        }         
+        }
     }
 }
-/********************************************************/
-template<typename T>
-void BStarTree<T>::print(Node *subRoot) const
-{
 
-}
 /********************************************************/
-template<typename T>
-void BStarTree<T>::printBackwards(Node *subRoot) const
-{
+template <typename T> void BStarTree<T>::print(Node *subRoot) const {}
 
-}
 /********************************************************/
-template<typename T>
-void BStarTree<T>::empty(Node *& subRoot)
-{
+template <typename T> void BStarTree<T>::printBackwards(Node *subRoot) const {}
 
-}
 /********************************************************/
-template<typename T>
-void BStarTree<T>::Delete(T v, Node*& subRoot)
-{
-   
+template <typename T> bool BStarTree<T>::search(T value) const {
+    return search(value, root);
 }
 
 /********************************************************/
-template<typename T>
-bool BStarTree<T>::isFull(const Node*& subRoot) const
-{
+template <typename T> void BStarTree<T>::empty(Node *&subRoot) {
+    if(subRoot != nullptr){
+        int nm = subRoot->children.getSize();
+        for(int i = 0; i < nm; ++i)
+            empty(subRoot->children[i]);        
+        delete subRoot;
+        subRoot = nullptr;
+        --numNodes; 
+    }   
+}
+
+/********************************************************/
+template <typename T> void BStarTree<T>::Delete(T v, Node *&subRoot) {}
+
+/********************************************************/
+template <typename T> bool BStarTree<T>::isFull(const Node *&subRoot) const {
     return subRoot->values.GetSize() == order - 1;
 }
 
-
-
+/********************************************************/
+template <typename T>
+bool BStarTree<T>::search(T &value, const Node *&subRoot) const {
+    int i = 0;
+    for (i; i < order - 1; ++i) {
+        if (value == subRoot->values[i])
+            return true;
+        if (value < subRoot->values[i])
+            return search(value, subRoot->children[i]);
+    }
+    return false;
+}
 
 /********************************************************/
-//NODE METHODS
+// NODE METHODS
 /********************************************************/
 
-
+/********************************************************/
+template <typename T>
+BStarTree<T>::Node::Node(OrderedList<T> vals, DoubleLinkedList<Node *> s)
+: values(vals), children(s) {}
 
 /********************************************************/
-template<typename T>
-BStarTree<T>::Node::Node(OrderedList<T> vals,DoubleLinkedList<Node*> s): values(vals),children(s){}
-/********************************************************/
-template<typename T>
-BStarTree<T>::Node::Node(T v,DoubleLinkedList<Node*> s): children(s)
-{
+template <typename T>
+BStarTree<T>::Node::Node(T v, DoubleLinkedList<Node *> s) : children(s) {
     values.add(v);
 }
+
 /********************************************************/
-template<typename T>
-bool BStarTree<T>::Node::isLeaf() const
-{
+template <typename T> bool BStarTree<T>::Node::isLeaf() const {
     return children.isEmpty();
 }
-
