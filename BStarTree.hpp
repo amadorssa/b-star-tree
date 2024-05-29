@@ -33,8 +33,6 @@ class BStarTree
         DoubleLinkedList<Node*> children;
         Node* parent;
         bool isLeaf() const;
-        bool hasLeftBrother() const;
-        bool hasRightBrother() const;
         bool isRoot() const;
 
     };
@@ -49,7 +47,9 @@ class BStarTree
         void empty(Node*& subRoot);
         void Delete(T v, Node*& subRoot);
         void rotateleft(Node *source, T v);
-        void rotateRight(Node *source, T v);
+        void rotateRight(Node *source, T v); 
+        bool isFull(const Node*& subRoot) const;
+
 };
 
 #endif//B_STAR_TREE_HPP
