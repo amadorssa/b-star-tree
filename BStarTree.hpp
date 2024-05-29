@@ -29,15 +29,14 @@ class BStarTree
       int degree;
       struct Node
       {   
-          Node(OrderedList<T> vals,DoubleLinkedList< Node* > s,Node *p=nullptr);
-          Node(T v,DoubleLinkedList< Node* > s, Node *p );
-          OrderedList<T> values;
-          DoubleLinkedList<Node*> children;
-          Node* parent;
-          bool isLeaf() const;
-          bool isRoot() const;
-
-
+        Node(Node *p);        
+        Node(OrderedList<T> vals,DoubleLinkedList< Node* > s,Node *p=nullptr);
+        Node(T v,DoubleLinkedList< Node* > s, Node *p );
+        OrderedList<T> values;
+        DoubleLinkedList<Node*> children;
+        Node* parent;
+        bool isLeaf() const;
+        bool isRoot() const;
       };
       Node *root;
       int numNodes;
@@ -54,6 +53,9 @@ class BStarTree
         void rotateleft(Node *source, T v);
         void rotateRight(Node *source, T v); 
         bool isFull(const Node*& subRoot) const;
+        bool isOverloaded(const Node *subRoot) const;
+        void splitLeft(Node *overloaded);
+        void splitRight(Node *overloaded);
 
 };
 
