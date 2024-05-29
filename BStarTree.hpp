@@ -24,16 +24,18 @@ class BStarTree
 
     private://attributes
 
-    int order;
+    int degree;
     struct Node
     {   
-        Node(OrderedList<T> vals,DoubleLinkedList<Node*> s);
-        Node(T v,DoubleLinkedList<Node*> s);
+        Node(OrderedList<T> vals,DoubleLinkedList< Node* > s,Node *p=nullptr);
+        Node(T v,DoubleLinkedList< Node* > s, Node *p );
         OrderedList<T> values;
         DoubleLinkedList<Node*> children;
+        Node* parent;
         bool isLeaf() const;
-        bool hasLeftSon() const;
-        bool hasRightSon() const;
+        bool hasLeftBrother() const;
+        bool hasRightBrother() const;
+        bool isRoot() const;
 
     };
     Node *root;
@@ -46,7 +48,8 @@ class BStarTree
         void printBackwards(Node* subRoot) const;
         void empty(Node*& subRoot);
         void Delete(T v, Node*& subRoot);
-
+        void rotateleft(Node *source, T v);
+        void rotateRight(Node *source, T v);
 };
 
 #endif//B_STAR_TREE_HPP
