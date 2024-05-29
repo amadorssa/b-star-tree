@@ -72,6 +72,10 @@ class OrderedList {
      */
     void PrintDescending() const;
 
+    T& getFirst() const;
+
+    T& getLast() const;
+
   private:
     /**
      * The double-linked list that stores the elements of the ordered list.

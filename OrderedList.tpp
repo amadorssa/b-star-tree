@@ -59,3 +59,15 @@ template <typename T>
 void OrderedList<T>::PrintDescending() const{
   list.printReverse();
 }
+/**********************************/
+template <typename T>
+T& OrderedList<T>::getFirst() const
+{
+  return list.getFront();
+}
+/**********************************/
+template <typename T>
+T& OrderedList<T>::getLast() const
+{
+  return list.getBack();
+}
