@@ -240,20 +240,6 @@ bool BStarTree<T>::Node::isLeaf() const
 }
 
 
-
-template<typename T>
-bool BStarTree<T>::Node::hasLeftSon() const
-{
-    continue;
-}
-
-template<typename T>
-bool BStarTree<T>::Node::hasRightSon() const
-{
-    continue;
-}
-
-
 /********************************************************/
 template<typename T>
 BStarTree<T>::Node::Node(OrderedList<T> vals,DoubleLinkedList<Node*> s, Node *p): values(vals),children(s), parent(p){}
