@@ -2,7 +2,7 @@ template <typename T>
 OrderedList<T>::OrderedList(){}
 /**********************************/
 template <typename T>
-void OrderedList<T>::Add(T value){
+void OrderedList<T>::add(T value){
     if(IsEmpty()) list.addFront(value);
     else{
         int index = 0;
@@ -18,28 +18,28 @@ void OrderedList<T>::Delete(T value){
 }
 /**********************************/
 template <typename T>
-bool OrderedList<T>::SearchValue(T value) const{
+bool OrderedList<T>::searchValue(T value) const{
   return list.searchValue(value);
 }
 /**********************************/
 template <typename T>
-void OrderedList<T>::Empty(){
+void OrderedList<T>::empty(){
   list.empty();
 }
 /**********************************/
 template <typename T>
-bool OrderedList<T>::IsEmpty() const{
+bool OrderedList<T>::isEmpty() const{
   return list.isEmpty();
 }
 /**********************************/
 template <typename T>
-int OrderedList<T>::GetSize() const{
+int OrderedList<T>::getSize() const{
   return list.getSize();
 }
 
 /**********************************/
 template <typename T>
-OrderedList<T> OrderedList<T>::Merge(const OrderedList<T> &ol) const{
+OrderedList<T> OrderedList<T>::merge(const OrderedList<T> &ol) const{
     OrderedList ol1 = ol;
     DoubleLinkedList aux = list;
     int size = aux.getSize();
@@ -51,15 +51,16 @@ OrderedList<T> OrderedList<T>::Merge(const OrderedList<T> &ol) const{
 }
 /**********************************/
 template <typename T>
-void OrderedList<T>::PrintAscending() const{
+void OrderedList<T>::printAscending() const{
   list.print();
 }
 /**********************************/
 template <typename T>
-void OrderedList<T>::PrintDescending() const{
+void OrderedList<T>::printDescending() const{
   list.printReverse();
 }
 /**********************************/
+
 template <typename T>
 T& OrderedList<T>::getFirst() const
 {
@@ -70,4 +71,28 @@ template <typename T>
 T& OrderedList<T>::getLast() const
 {
   return list.getBack();
+}
+/**********************************/
+template <typename T>
+T& OrderedList<T>::getFirst() 
+{
+  return list.getFront();
+}
+/**********************************/
+template <typename T>
+T& OrderedList<T>::getLast() 
+{
+  return list.getBack();
+}
+/**********************************/
+template <typename T>
+void OrderedList<T>::deleteFirst()
+{
+  list.removeFront();
+}
+/**********************************/
+template <typename T>
+void OrderedList<T>::deleteLast()
+{
+  list.removeBack();
 }

@@ -128,9 +128,8 @@ void BStarTree<T>::empty(Node *& subRoot)
 template<typename T>
 void BStarTree<T>::Delete(T v, Node*& subRoot)
 {
-   
-}
 
+}
 /********************************************************/
 template<typename T>
 bool BStarTree<T>::isFull(const Node*& subRoot) const
@@ -141,13 +140,34 @@ bool BStarTree<T>::isFull(const Node*& subRoot) const
 template<typename T>
 void BStarTree<T>::rotateleft(Node *source, T v)
 {
-    source->values.get
+    //We store a reference to the parent's value that's to be used
+    T& valueInParent=source->parent->values[source->parent->children.searchIndex(source)-1];
+    //puts the parent's value in the left sibling 
+    source->getLeftSibling(source)->values.add(valueInParent);
+    //puts the first value from the source into the parent
+    valueInParent=source->values.getFirst();
+    //removes the transfered value
+    source->values.deleteFirst();
+    //adds the element
+    source->values.add(v);
+    int help=0;
+
 }
 /********************************************************/
+//Assumes ideal conditions. these conditions need to be verified outside of the method
 template<typename T>
 void BStarTree<T>::rotateRight(Node *source, T v)
 {
-
+    //We store a reference to the parent's value that's to be used
+    T& valueInParent=source->parent->values[source->parent->children.searchIndex(source)];
+    //puts the parent's value in the right sibling 
+    source->getRightSibling(source)->values.add(valueInParent);
+    //puts the first value from the source into the parent
+    valueInParent=source->values.getLast();
+    //removes the transfered value
+    source->values.deleteLast();
+    //adds the element
+    source->values.add(v);
 }
 
 
@@ -172,10 +192,9 @@ bool BStarTree<T>::Node::isLeaf() const
 {
     return children.isEmpty();
 }
-/*******************************************************/
+/********************************************************/
 template<typename T>
 bool BStarTree<T>::Node::isRoot() const
 {
     return parent==nullptr;
 }
-
