@@ -34,7 +34,6 @@ class BStarTree
         bool isLeaf() const;
         bool hasLeftSon() const;
         bool hasRightSon() const;
-
     };
     Node *root;
     int numNodes;
@@ -45,7 +44,8 @@ class BStarTree
         void print(Node* subRoot) const;
         void printBackwards(Node* subRoot) const;
         void empty(Node*& subRoot);
-        void Delete(T v, Node*& subRoot);
+    void Delete(T v, Node*& subRoot);    
+    bool isFull(const Node*& subRoot) const;
 
 };
 
