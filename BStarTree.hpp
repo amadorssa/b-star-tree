@@ -21,8 +21,11 @@ class BStarTree
         void print() const;
         void printBackwards() const;
         void printByLevels() const;
+        
 
     private://attributes
+
+        
 
     int order;
     struct Node
@@ -31,9 +34,11 @@ class BStarTree
         Node(T v,DoubleLinkedList<Node*> s);
         OrderedList<T> values;
         DoubleLinkedList<Node*> children;
+        Node* parent;
         bool isLeaf() const;
         bool hasLeftSon() const;
         bool hasRightSon() const;
+
 
     };
     Node *root;
@@ -46,6 +51,8 @@ class BStarTree
         void printBackwards(Node* subRoot) const;
         void empty(Node*& subRoot);
         void Delete(T v, Node*& subRoot);
+        Node* getLeftSibling(Node* n);
+        Node* getRightSibling(Node* n);
 
 };
 

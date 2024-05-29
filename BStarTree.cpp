@@ -104,13 +104,88 @@ void BStarTree<T>::Delete(T v, Node*& subRoot)
 
 }
 
+/********************************************************/
+
+template<typename T>
+typename BStarTree<T>::Node* BStarTree<T>::getLeftSibling(Node* actual)
+{   
+    // Revisar si el nodo es la raíz
+    if (actual == nullptr || actual->parent==nullptr){
+        return nullptr;
+    }
+
+    // Encontrar el índice del nodo en la lista de hijos del padre
+    Node* parent = actual->parent;
+    int childIndex = -1;
+    int numChildren = parent->children.getSize();
+    for (int i = 0; i < numChildren; ++i) {
+        if (parent->children[i] == actual) {
+            childIndex = i;
+            break;
+        }
+    }
+
+    // Si el nodo no está en la lista de hijos del padre, regresar nullptr
+    if (childIndex <= 0) {
+        return nullptr;
+    }
+
+    // Regresar el nodo izquierdo
+    return parent->children[childIndex - 1];
+}
 
 
+template<typename T>
+typename BStarTree<T>::Node* BStarTree<T>::getRightSibling(Node* actual)
+{
+    // Revisar si el nodo es la raíz
+    if (actual == nullptr || actual->parent==nullptr){
+        return nullptr;
+    }
+
+    // Encontrar el índice del nodo en la lista de hijos del padre
+    Node* parent = actual->parent;
+    int childIndex = -1; 
+    numChildren = parent->children.getSize();
+    for (int i = 0; i < numChildren; ++i) {
+        if (parent->children[i] == actual) {
+            childIndex = i;
+            break;
+        }
+    }
+
+    // Si el nodo no está en la lista de hijos del padre, regresar nullptr
+    if (childIndex == -1 || childIndex == numChildren - 1) {
+        return nullptr;
+    }
+
+    // Regresar el nodo derecho
+    return parent->children[childIndex + 1];
+}
 
 /********************************************************/
 //NODE METHODS
 /********************************************************/
 
+template<typename T>
+bool BStarTree<T>::Node::isLeaf() const
+{
+    return children.isEmpty();
+}
+
+
+
+template<typename T>
+bool BStarTree<T>::Node::hasLeftSon() const
+{
+    continue;
+}
+
+template<typename T>
+bool BStarTree<T>::Node::hasRightSon() const
+{
+    continue;
+}
 
 
 /********************************************************/
