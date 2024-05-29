@@ -1,7 +1,9 @@
 #include "BStarTree.hpp"
+#include "Queue.hpp"
+#include <cmath>
 
 template<typename T>
-BStarTree<T>::BStarTree(int o): root(nullptr), numNodes(0),degree(o) {};
+BStarTree<T>::BStarTree(int o): root(nullptr), numNodes(0),order(o) {};
 /********************************************************/
 template<typename T>
 BStarTree<T>::~BStarTree()
@@ -92,15 +94,16 @@ void BStarTree<T>::add(const T& v, Node*& subRoot)
         if(!subRoot->isFull())
             subRoot->values.add(v); // If the node isnt full , just add.
         else{
-            Node *aux = subRoot->getLeftSibling();
-            if(aux != nullptr && !isFull(aux)){
+            Node *leftS = subRoot->getLeftSibling();
+            if(leftS != nullptr && !isFull(leftS)){
                 rotateLeft(subRoot);
             }else{
-                aux = subRoot->getRightSibling();
-                if(aux != nullptr && !isFull(aux)){
+                Node *rightS = subRoot->getRightSibling();
+                if(rightS != nullptr && !isFull(rightS)){
                     rotateRight(subRoot);
                 }else{
-                    split(subRoot);
+                    if(leftS!=nullptr) splitLeft(subRoot);
+                    else splitRight(subRoot);
                 }
             }
         }         
@@ -189,7 +192,7 @@ typename BStarTree<T>::Node* BStarTree<T>::getLeftSibling(Node* actual)
 template<typename T>
 void BStarTree<T>::rotateRight(Node *source, T v)
 {
-    //We store a reference to the parent's value that's to be used
+                                                                                                                                                    //We store a reference to the parent's value that's to be used
     T& valueInParent=source->parent->values[source->parent->children.searchIndex(source)];
     //puts the parent's value in the right sibling 
     source->getRightSibling(source)->values.add(valueInParent);
@@ -228,6 +231,212 @@ typename BStarTree<T>::Node* BStarTree<T>::getRightSibling(Node* actual)
     // Regresar el nodo derecho
     return parent->children[childIndex + 1];
 }
+/********************************************************/
+template<typename T>
+void BStarTree<T>::splitRight(Node *overloaded)
+{
+    //Declaration of list of values
+    OrderedList<T> totalValues;
+    //We save relevant memory locations
+    Node *sibling=getRightSibling(overloaded);
+    Node *parent=overloaded->parent;
+    //We save the position of the overloaded node in it's parent's children list
+    int positionOverloaded=parent->children.searchIndex(overloaded);
+    //We save the position of the node that is rightest of splitting nodes
+    int mostRightPosition=positionOverloaded+2;
+    //We fill the list of values
+    totalValues=totalValues.merge(overloaded->values);
+    totalValues=totalValues.merge(sibling->values);
+    totalValues.add(parent->values[positionOverloaded]);
+    //We create a queue to save the children of the overloaded node and it's sibling
+    Queue<Node*> totalChildren;
+    //We fill the queue with the overloaded node's children, as well as it's sibling's
+    for(int i=0; i<overloaded->children.getSize();++i) totalChildren.enqueue(overloaded->children[i]);
+    for(int i=0; i<sibling->children.getSize();++i) totalChildren.enqueue(sibling->children[i]);
+    //We create 3 new nodes which are to be the splits
+    Node *n1=new Node();
+    Node *n2=new Node();
+    Node *n3=new Node();
+    //We fill said nodes, and push the corresponding values to the parent
+    for(int i=0;i<ceil((2*order)/3)-1;++i)
+    {
+        n1->values.add(totalValues.getFirst());
+        totalValues.deleteFirst();
+    }
+    parent->values.add(totalValues.getFirst());
+    totalValues.deleteFirst();
+    //Second node
+    for(int i=0;i<ceil((2*order)/3)-1;++i)
+    {
+        n2->values.add(totalValues.getFirst());
+        totalValues.deleteFirst();
+    }
+    parent->values.add(totalValues.getFirst());
+    totalValues.deleteFirst();
+    //Third node
+    for(int i=0;i<ceil((2*order)/3)-1;++i)
+    {
+        n3->values.add(totalValues.getFirst());
+        totalValues.deleteFirst();
+    }
+    parent->values.add(totalValues.getFirst());
+    totalValues.deleteFirst();
+    //We check if the queue isn't empty(it would mean we're in a leaf scenario)
+    if(!totalChildren.isEmpty())
+    {
+        //We add the children to the respective nodes
+        for(int i=0;i<ceil((2*order)/3);++i)
+        {
+            n3->children.add(totalChildren.getFront());
+            totalChildren.dequeue();
+        }
+        //second node
+        for(int i=0;i<ceil((2*order)/3);++i)
+        {
+            n2->children.add(totalChildren.getFront());
+            totalChildren.dequeue();
+        }
+        //third node
+        for(int i=0;i<ceil((2*order)/3);++i)
+        {
+            n1->children.add(totalChildren.getFront());
+            totalChildren.dequeue();
+        }
+    }
+    //we add the new nodes to the parent node
+    parent->children.add(n3,mostRightPosition);
+    parent->children.add(n2,mostRightPosition);
+    parent->children.add(n1,mostRightPosition);
+    //we remove the original overloaded node and it's sibling
+    parent->children->remove(positionOverloaded);
+    parent->children->remove(positionOverloaded);
+
+    //We check if the parent didn't become overloaded itself, and handle the situation
+    if(isOverloaded(parent))
+    {
+        //We check if we can perform a rotation, and do so if possible
+        Node *leftS = parent->getLeftSibling();
+            if(leftS != nullptr && !isFull(leftS)){
+                rotateLeft(parent);
+            }else{
+                Node *rightS = parent->getRightSibling();
+                if(rightS != nullptr && !isFull(rightS)){
+                    rotateRight(parent);
+                }else{
+                    //We perform the corresponding split
+                    if(leftS!=nullptr) splitLeft(parent);
+                    else splitRight(parent);
+                }
+            }
+    }
+}
+/********************************************************/
+template<typename T>
+void BStarTree<T>::splitLeft(Node *overloaded)
+{
+        //Declaration of list of values
+    OrderedList<T> totalValues;
+    //We save relevant memory locations
+    Node *sibling=getLeftSibling(overloaded);
+    Node *parent=overloaded->parent;
+    //We save the position of the overloaded node in it's parent's children list
+    int positionOverloaded=parent->children.searchIndex(overloaded);
+    //We save the position of the node that is rightest of splitting nodes
+    int mostRightPosition=positionOverloaded+1;
+    //We fill the list of values
+    totalValues=totalValues.merge(overloaded->values);
+    totalValues=totalValues.merge(sibling->values);
+    totalValues.add(parent->values[positionOverloaded]);
+    //We create a queue to save the children of the overloaded node and it's sibling
+    Queue<Node*> totalChildren;
+    //We fill the queue with the overloaded node's children, as well as it's sibling's
+    for(int i=0; i<sibling->children.getSize();++i) totalChildren.enqueue(sibling->children[i]);
+    for(int i=0; i<overloaded->children.getSize();++i) totalChildren.enqueue(overloaded->children[i]);
+    //We create 3 new nodes which are to be the splits
+    Node *n1=new Node();
+    Node *n2=new Node();
+    Node *n3=new Node();
+    //We fill said nodes, and push the corresponding values to the parent
+    for(int i=0;i<ceil((2*order)/3)-1;++i)
+    {
+        n1->values.add(totalValues.getFirst());
+        totalValues.deleteFirst();
+    }
+    parent->values.add(totalValues.getFirst());
+    totalValues.deleteFirst();
+    //Second node
+    for(int i=0;i<ceil((2*order)/3)-1;++i)
+    {
+        n2->values.add(totalValues.getFirst());
+        totalValues.deleteFirst();
+    }
+    parent->values.add(totalValues.getFirst());
+    totalValues.deleteFirst();
+    //Third node
+    for(int i=0;i<ceil((2*order)/3)-1;++i)
+    {
+        n3->values.add(totalValues.getFirst());
+        totalValues.deleteFirst();
+    }
+    parent->values.add(totalValues.getFirst());
+    totalValues.deleteFirst();
+    //We check if the queue isn't empty(it would mean we're in a leaf scenario)
+    if(!totalChildren.isEmpty())
+    {
+        //We add the children to the respective nodes
+        for(int i=0;i<ceil((2*order)/3);++i)
+        {
+            n3->children.add(totalChildren.getFront());
+            totalChildren.dequeue();
+        }
+        //second node
+        for(int i=0;i<ceil((2*order)/3);++i)
+        {
+            n2->children.add(totalChildren.getFront());
+            totalChildren.dequeue();
+        }
+        //third node
+        for(int i=0;i<ceil((2*order)/3);++i)
+        {
+            n1->children.add(totalChildren.getFront());
+            totalChildren.dequeue();
+        }
+    }
+    //we add the new nodes to the parent node
+    parent->children.add(n3,mostRightPosition);
+    parent->children.add(n2,mostRightPosition);
+    parent->children.add(n1,mostRightPosition);
+    //we remove the original overloaded node and it's sibling
+    parent->children->remove(positionOverloaded-1);
+    parent->children->remove(positionOverloaded-1);
+
+    //We check if the parent didn't become overloaded itself, and handle the situation
+    if(isOverloaded(parent))
+    {
+        //We check if we can perform a rotation, and do so if possible
+        Node *leftS = parent->getLeftSibling();
+            if(leftS != nullptr && !isFull(leftS)){
+                rotateLeft(parent);
+            }else{
+                Node *rightS = parent->getRightSibling();
+                if(rightS != nullptr && !isFull(rightS)){
+                    rotateRight(parent);
+                }else{
+                    //We perform the corresponding split
+                    if(leftS!=nullptr) splitLeft(parent);
+                    else splitRight(parent);
+                }
+            }
+    }
+}
+/********************************************************/
+template<typename T>
+bool BStarTree<T>::isOverloaded(const Node *subRoot) const
+{
+    return subRoot->values.getSize()>=order;
+}
+
+
 
 /********************************************************/
 //NODE METHODS
@@ -249,6 +458,9 @@ BStarTree<T>::Node::Node(T v,DoubleLinkedList<Node*> s, Node *p): children(s), p
 {
     values.add(v);
 }
+/********************************************************/
+template<typename T>
+BStarTree<T>::Node::Node(Node *p): parent(p){}
 /********************************************************/
 template<typename T>
 bool BStarTree<T>::Node::isLeaf() const
