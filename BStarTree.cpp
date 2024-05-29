@@ -1,7 +1,7 @@
 #include "BStarTree.hpp"
 
 template<typename T>
-BStarTree<T>::BStarTree(int o): root(nullptr), numNodes(0),order(o) {};
+BStarTree<T>::BStarTree(int o): root(nullptr), numNodes(0),degree(o) {};
 /********************************************************/
 template<typename T>
 BStarTree<T>::~BStarTree()
@@ -77,7 +77,34 @@ void BStarTree<T>::printByLevels() const
 template<typename T>
 void BStarTree<T>::add(const T& v, Node*& subRoot)
 {
-
+    if(!subRoot->isLeaf()){
+        int size = subRoot->values.getSize(), aux;
+        for(int i =  0; i < size; ++i){
+            aux = subRoot->values[i];
+            if(aux == v) return; // The value already exists.
+            if(aux < v){
+                add(v, subRoot->children[i]); // Explore the way. Recursive.
+                break;  
+            } 
+        }
+        
+    }else{
+        if(!subRoot->isFull())
+            subRoot->values.add(v); // If the node isnt full , just add.
+        else{
+            Node *aux = subRoot->getLeftSibling();
+            if(aux != nullptr && !isFull(aux)){
+                rotateLeft(subRoot);
+            }else{
+                aux = subRoot->getRightSibling();
+                if(aux != nullptr && !isFull(aux)){
+                    rotateRight(subRoot);
+                }else{
+                    split(subRoot);
+                }
+            }
+        }         
+    }
 }
 /********************************************************/
 template<typename T>
@@ -103,6 +130,28 @@ void BStarTree<T>::Delete(T v, Node*& subRoot)
 {
 
 }
+/********************************************************/
+template<typename T>
+bool BStarTree<T>::isFull(const Node*& subRoot) const
+{
+    return subRoot->values.GetSize() == order - 1;
+}
+/********************************************************/
+template<typename T>
+void BStarTree<T>::rotateleft(Node *source, T v)
+{
+    //We store a reference to the parent's value that's to be used
+    T& valueInParent=source->parent->values[source->parent->children.searchIndex(source)-1];
+    //puts the parent's value in the left sibling 
+    source->getLeftSibling(source)->values.add(valueInParent);
+    //puts the first value from the source into the parent
+    valueInParent=source->values.getFirst();
+    //removes the transfered value
+    source->values.deleteFirst();
+    //adds the element
+    source->values.add(v);
+    int help=0;
+
 
 /********************************************************/
 
@@ -134,6 +183,23 @@ typename BStarTree<T>::Node* BStarTree<T>::getLeftSibling(Node* actual)
     return parent->children[childIndex - 1];
 }
 
+}
+/********************************************************/
+//Assumes ideal conditions. these conditions need to be verified outside of the method
+template<typename T>
+void BStarTree<T>::rotateRight(Node *source, T v)
+{
+    //We store a reference to the parent's value that's to be used
+    T& valueInParent=source->parent->values[source->parent->children.searchIndex(source)];
+    //puts the parent's value in the right sibling 
+    source->getRightSibling(source)->values.add(valueInParent);
+    //puts the first value from the source into the parent
+    valueInParent=source->values.getLast();
+    //removes the transfered value
+    source->values.deleteLast();
+    //adds the element
+    source->values.add(v);
+}
 
 template<typename T>
 typename BStarTree<T>::Node* BStarTree<T>::getRightSibling(Node* actual)
@@ -190,10 +256,10 @@ bool BStarTree<T>::Node::hasRightSon() const
 
 /********************************************************/
 template<typename T>
-BStarTree<T>::Node::Node(OrderedList<T> vals,DoubleLinkedList<Node*> s): values(vals),children(s){}
+BStarTree<T>::Node::Node(OrderedList<T> vals,DoubleLinkedList<Node*> s, Node *p): values(vals),children(s), parent(p){}
 /********************************************************/
 template<typename T>
-BStarTree<T>::Node::Node(T v,DoubleLinkedList<Node*> s): children(s)
+BStarTree<T>::Node::Node(T v,DoubleLinkedList<Node*> s, Node *p): children(s), parent(p)
 {
     values.add(v);
 }
@@ -202,4 +268,10 @@ template<typename T>
 bool BStarTree<T>::Node::isLeaf() const
 {
     return children.isEmpty();
+}
+/********************************************************/
+template<typename T>
+bool BStarTree<T>::Node::isRoot() const
+{
+    return parent==nullptr;
 }

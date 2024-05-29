@@ -24,25 +24,23 @@ class BStarTree
         
 
     private://attributes
-
-        
-
-    int order;
-    struct Node
-    {   
-        Node(OrderedList<T> vals,DoubleLinkedList<Node*> s);
-        Node(T v,DoubleLinkedList<Node*> s);
-        OrderedList<T> values;
-        DoubleLinkedList<Node*> children;
-        Node* parent;
-        bool isLeaf() const;
-        bool hasLeftSon() const;
-        bool hasRightSon() const;
+  
+      int order;
+      int degree;
+      struct Node
+      {   
+          Node(OrderedList<T> vals,DoubleLinkedList< Node* > s,Node *p=nullptr);
+          Node(T v,DoubleLinkedList< Node* > s, Node *p );
+          OrderedList<T> values;
+          DoubleLinkedList<Node*> children;
+          Node* parent;
+          bool isLeaf() const;
+          bool isRoot() const;
 
 
-    };
-    Node *root;
-    int numNodes;
+      };
+      Node *root;
+      int numNodes;
 
     private://methods
 
@@ -53,6 +51,9 @@ class BStarTree
         void Delete(T v, Node*& subRoot);
         Node* getLeftSibling(Node* n);
         Node* getRightSibling(Node* n);
+        void rotateleft(Node *source, T v);
+        void rotateRight(Node *source, T v); 
+        bool isFull(const Node*& subRoot) const;
 
 };
 

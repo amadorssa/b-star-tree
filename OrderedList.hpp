@@ -22,7 +22,7 @@ class OrderedList {
      * Adds an element to the list in the correct position to maintain order.
      * @param value The value to add.
      */
-    void Add(T value);
+    void add(T value);
 
     /**
      * Deletes a specific element from the list.
@@ -36,41 +36,53 @@ class OrderedList {
      * @param value The value to search for.
      * @return true if the value is present, false otherwise.
      */
-    bool SearchValue(T value) const;
+    bool searchValue(T value) const;
 
     /**
      * Removes all elements from the list, leaving it empty.
      */
-    void Empty();
+    void empty();
 
     /**
      * Checks if the list is empty.
      * @return true if the list has no elements, false otherwise.
      */
-    bool IsEmpty() const;
+    bool isEmpty() const;
 
     /**
      * Returns the number of elements in the list.
      * @return The size of the list.
      */
-    int GetSize() const;
+    int getSize() const;
 
     /**
      * Merges this list with another ordered list, keeping the elements in order.
      * @param ol The other ordered list to merge with.
      * @return A new ordered list resulting from the merge.
      */
-    OrderedList<T> Merge(const OrderedList<T> &ol) const;
+    OrderedList<T> merge(const OrderedList<T> &ol) const;
 
     /**
      * Prints the elements of the list in ascending order.
      */
-    void PrintAscending() const;
+    void printAscending() const;
 
     /**
      * Prints the elements of the list in descending order.
      */
-    void PrintDescending() const;
+    void printDescending() const;
+
+    T& getFirst() const;
+
+    T& getLast() const;
+
+    T& getFirst();
+
+    T& getLast();
+
+    void deleteFirst();
+
+    void deleteLast();
 
   private:
     /**
