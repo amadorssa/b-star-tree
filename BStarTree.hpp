@@ -7,7 +7,7 @@ class BStarTree
 
     public:
 
-        BStarTree(int o);
+        BStarTree();
         ~BStarTree();
         BStarTree(const BStarTree& t);
         BStarTree& operator=(const BStarTree& t);
@@ -22,7 +22,6 @@ class BStarTree
 
     private://attributes
   
-      int order;
       struct Node
       {   
         Node::Node(Node* p) : parent(p), numberOfElements(0), values(new T[O]), children(new Node*[O+1]) {}
@@ -34,7 +33,8 @@ class BStarTree
         Node* parent;
         bool isLeaf() const;
         bool isRoot() const;
-        int getIndex(const T& v) const;
+        int getValueIndex(const T& v) const;
+        int getChildIndex(const Node*& n) const;
         void remove(const T& v);
         void add(const T& v);
         void empty();
@@ -57,8 +57,6 @@ class BStarTree
 
         void rotateleft(Node *source, T v);
         void rotateRight(Node *source, T v); 
-        bool isFull(const Node*& subRoot) const;
-        bool isOverloaded(const Node *subRoot) const;
         void splitLeft(Node *overloaded);
         void splitRight(Node *overloaded);
         void splitRoot();
