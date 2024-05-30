@@ -174,38 +174,33 @@ void BStarTree<T,O>::rotateleft(Node *source, T v)
 /********************************************************/
 
 template<typename T, int O>
-typename BStarTree<T,O>::Node* BStarTree<T,O>::getLeftSibling(Node* actual)
-{   
-// Revisar si el nodo es la raíz
-    if (actual == nullptr || actual->parent == nullptr) {
+typename BStarTree<T,O>::Node*::getLeftSibling(){
+    if (parent == nullptr) {
         return nullptr;
     }
 
-    // Encontrar el índice del nodo en la lista de hijos del padre
-    Node *parent = actual->parent;
-    int childIndex = -1;
-    int numChildren = parent->children.getSize();
-    for (int i = 0; i < numChildren; ++i) {
-        if (parent->children[i] == actual) {
-            childIndex = i;
+    // Find this node index in the children array
+    int index = -1;
+    for (int i = 0; i <= parent->numberOfElements; ++i) {  
+        if (parent->children[i] == this) {
+            index = i;
             break;
         }
     }
 
-    // Si el nodo no está en la lista de hijos del padre, regresar nullptr
-    if (childIndex <= 0) {
+    // Check if this node is the first child
+    if (index <= 0) {
         return nullptr;
     }
 
-    // Regresar el nodo izquierdo
-    return parent->children[childIndex - 1];
+    // Return the left sibling
+    return parent->children[index - 1];
 }
 /********************************************************/
 //Assumes ideal conditions. these conditions need to be verified outside of the method
 template<typename T, int O>
 void BStarTree<T,O>::rotateRight(Node *source, T v)
-{
-                                                                                                                                                    //We store a reference to the parent's value that's to be used
+{                                                                                                                //We store a reference to the parent's value that's to be used
     T& valueInParent=source->parent->values[source->parent->children.searchIndex(source)];
     //puts the parent's value in the right sibling 
     source->getRightSibling(source)->values.add(valueInParent);
@@ -218,31 +213,27 @@ void BStarTree<T,O>::rotateRight(Node *source, T v)
 }
 
 template<typename T, int O>
-typename BStarTree<T,O>::Node* BStarTree<T,O>::getRightSibling(Node* actual)
-{
-    // Revisar si el nodo es la raíz
-    if (actual == nullptr || actual->parent == nullptr) {
+typename BStarTree<T,O>::Node*::getRightSibling() {
+    if (parent == nullptr) {
         return nullptr;
     }
 
-    // Encontrar el índice del nodo en la lista de hijos del padre
-    Node *parent = actual->parent;
-    int childIndex = -1;
-    int numChildren = parent->children.getSize();
-    for (int i = 0; i < numChildren; ++i) {
-        if (parent->children[i] == actual) {
-            childIndex = i;
+    // Find this node index in the children array
+    int index = -1;
+    for (int i = 0; i <= parent->numberOfElements; ++i) {
+        if (parent->children[i] == this) {
+            index = i;
             break;
         }
     }
 
-    // Si el nodo no está en la lista de hijos del padre, regresar nullptr
-    if (childIndex == -1 || childIndex == numChildren - 1) {
+    // Check if this node is the last child
+    if (index == -1 || index == parent->numberOfElements) {
         return nullptr;
     }
 
-    // Regresar el nodo derecho
-    return parent->children[childIndex + 1];
+    // Return the right sibling
+    return parent->children[index + 1];
 }
 
 /********************************************************/
