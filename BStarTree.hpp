@@ -36,13 +36,12 @@ class BStarTree
         int getValueIndex(const T& v) const;
         int getChildIndex(const Node*& n) const;
         void remove(const T& v);
-        void add(const T& v);
+        void addValue(const T& v);
         void empty();
         bool isFull() const;
         bool isOverloaded() const;
         Node* getLeftSibling();
         Node* getRightSibling();
-
       };
       Node *root;
       int numNodes;
@@ -54,9 +53,10 @@ class BStarTree
         void printBackwards(Node* subRoot) const;
         void empty(Node*& subRoot);
         void Delete(T v, Node*& subRoot);
-
-        void rotateleft(Node *source, T v);
-        void rotateRight(Node *source, T v); 
+        void lendToLeft(Node *source);
+        void lendToRight(Node *source); 
+        bool isFull(const Node*& subRoot) const;
+        bool isOverloaded(const Node *subRoot) const;
         void splitLeft(Node *overloaded);
         void splitRight(Node *overloaded);
         void splitRoot();

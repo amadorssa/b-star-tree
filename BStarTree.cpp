@@ -105,18 +105,25 @@ template <typename T, int O>
 void BStarTree<T, O>::Delete(T v, Node *&subRoot) {}
 
 /********************************************************/
-template <typename T, int O>
-void BStarTree<T, O>::rotateleft(Node *source, T v) {
+template<typename T,int O>
+bool BStarTree<T,O>::isFull(const Node*& subRoot) const
+{
+    return subRoot->values.GetSize() == order - 1;
+}
+/********************************************************/
+template<typename T, int O>
+void BStarTree<T,O>::lendToRight(Node *source)
+{
     // We store a reference to the parent's value that's to be used
-    T &valueInParent =source->parent->values[source->parent->getChildIndex(source) - 1];
-    // puts the parent's value in the left sibling
-    source->getLeftSibling(source)->values.add(valueInParent);
-    // puts the first value from the source into the parent
-    valueInParent = source->values.getFirst();
-    // removes the transfered value
-    source->values.deleteFirst();
-    // adds the element
-    source->values.add(v);
+    T valueInParent =source->parent->values[source->parent->getChildIndex(source) + 1];
+    //we store the index of the value
+    int indexOfParentValue=source->parent->getValueIndex(valueInParent);
+    //puts the parent's value into the right sibling
+    source->getRightSibling()->addValue(valueInParent);
+    //changes the parent value
+    source->parent->values[indexOfParentValue]=source->values[source->numberOfElements-1];
+    // removes the transferred value from the source
+    source->values.remove(source->values[source->numberOfElements-1]);
 }
 /********************************************************/
 template<typename T, int O>
@@ -145,17 +152,18 @@ typename BStarTree<T,O>::Node*::getLeftSibling(){
 /********************************************************/
 //Assumes ideal conditions. these conditions need to be verified outside of the method
 template<typename T, int O>
-void BStarTree<T,O>::rotateRight(Node *source, T v)
-{                                                                                                                //We store a reference to the parent's value that's to be used
-    T& valueInParent=source->parent->values[source->parent->children.searchIndex(source)];
-    //puts the parent's value in the right sibling 
-    source->getRightSibling(source)->values.add(valueInParent);
-    // puts the first value from the source into the parent
-    valueInParent = source->values.getLast();
-    // removes the transfered value
-    source->values.deleteLast();
-    // adds the element
-    source->values.add(v);
+void BStarTree<T,O>::lendToLeft(Node *source)
+{
+    // We store a reference to the parent's value that's to be used
+    T valueInParent =source->parent->values[source->parent->getChildIndex(source) + 1];
+    //we store the index of the value
+    int indexOfParentValue=source->parent->getValueIndex(valueInParent);
+    //puts the parent's value into the left sibling
+    source->getLeftSibling()->addValue(valueInParent);
+    //changes the parent value
+    source->parent->values[indexOfParentValue]=source->values[0];
+    // removes the transferred value from the source
+    source->values.remove(source->values[0]);
 }
 template<typename T, int O>
 typename BStarTree<T,O>::Node*::getRightSibling() {
@@ -292,8 +300,9 @@ int BStarTree<T, O>::Node::getIndex(const T &v) const {
     }
 }
 /********************************************************/
-template <typename T, int O> void BStarTree<T, O>::Node::add(const T &v) {
-
+template<typename T, int O>
+void BStarTree<T,O>::Node::addValue(const T& v)
+{                            
     int index = 0;
     for (index; index < numberOfElements; ++index) {
         if (values[index] == v)
