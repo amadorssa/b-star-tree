@@ -24,7 +24,7 @@ class BStarTree
   
       struct Node
       {   
-        Node(Node *p);
+        Node::Node(Node* p) : parent(p), numberOfElements(0), values(new T[O]), children(new Node*[O+1]) {}
         int numberOfElements;
         int maxCapacity;
         int minCapacity;   
@@ -40,6 +40,9 @@ class BStarTree
         void empty();
         bool isFull() const;
         bool isOverloaded() const;
+        Node* getLeftSibling();
+        Node* getRightSibling();
+
       };
       Node *root;
       int numNodes;
@@ -51,8 +54,7 @@ class BStarTree
         void printBackwards(Node* subRoot) const;
         void empty(Node*& subRoot);
         void Delete(T v, Node*& subRoot);
-        Node* getLeftSibling(Node* n);
-        Node* getRightSibling(Node* n);
+
         void rotateleft(Node *source, T v);
         void rotateRight(Node *source, T v); 
         void splitLeft(Node *overloaded);
