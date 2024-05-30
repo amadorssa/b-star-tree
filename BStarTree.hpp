@@ -34,7 +34,7 @@ class BStarTree
         bool isLeaf() const;
         bool isRoot() const;
         int getValueIndex(const T& v) const;
-        int getChildIndex(const Node*& n) const;
+        int getChildIndex(const Node*& child) const;
         void remove(const T& v);
         void addValue(const T& v);
         void empty();

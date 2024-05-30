@@ -48,7 +48,7 @@ template <typename T, int O> void BStarTree<T, O>::printByLevels() const {}
 template <typename T, int O>
 void BStarTree<T, O>::add(const T &v, Node *&subRoot) {
     if (!subRoot->isLeaf()) {
-        int size = subRoot->numberOfElements, aux;
+        int size = subRoot->numberOfKeys, aux;
         for (int i = 0; i < size; ++i) {
             aux = subRoot->values[i];
             if (aux == v)
@@ -60,15 +60,15 @@ void BStarTree<T, O>::add(const T &v, Node *&subRoot) {
         }
     } else {
         if (!subRoot->isFull())
-            subRoot->add(v); // If the node isnt full , just add.
+            subRoot->addValue(v); // If the node isnt full , just add.
         else {
             Node *leftS = subRoot->getLeftSibling();
             if (leftS != nullptr && !isFull(leftS)) {
-                rotateLeft(subRoot);
+                lendToLeft(subRoot);
             } else {
                 Node *rightS = subRoot->getRightSibling();
                 if (rightS != nullptr && !isFull(rightS)) {
-                    rotateRight(subRoot);
+                    lendToRight(subRoot);
                 } else {
                     if (leftS != nullptr)
                         splitLeft(subRoot);
@@ -127,21 +127,15 @@ void BStarTree<T,O>::lendToRight(Node *source)
 }
 /********************************************************/
 template<typename T, int O>
-typename BStarTree<T,O>::Node*::getLeftSibling(){
+typename BStarTree<T,O>::Node* BStarTree<T,O>::Node::getLeftSibling(){
     if (parent == nullptr) {
         return nullptr;
     }
 
     // Find this node index in the children array
-    int index = -1;
-    for (int i = 0; i <= parent->numberOfElements; ++i) {  
-        if (parent->children[i] == this) {
-            index = i;
-            break;
-        }
-    }
+    int index = parent->getChildIndex(this);
 
-    // Check if this node is the first child
+    // Check if this node is the first child, or isn't in the children list
     if (index <= 0) {
         return nullptr;
     }
@@ -166,22 +160,16 @@ void BStarTree<T,O>::lendToLeft(Node *source)
     source->values.remove(source->values[0]);
 }
 template<typename T, int O>
-typename BStarTree<T,O>::Node*::getRightSibling() {
+typename BStarTree<T,O>::Node* BStarTree<T,O>::Node::getRightSibling() {
     if (parent == nullptr) {
         return nullptr;
     }
 
     // Find this node index in the children array
-    int index = -1;
-    for (int i = 0; i <= parent->numberOfElements; ++i) {
-        if (parent->children[i] == this) {
-            index = i;
-            break;
-        }
-    }
+    int index=parent->getChildIndex(this);
 
-    // Check if this node is the last child
-    if (index == -1 || index == parent->numberOfElements) {
+    // Check if this node is the last child, or isn't in the children list
+    if (index == -1 || index == parent->numberOfKeys) {
         return nullptr;
     }
 
@@ -308,15 +296,6 @@ int BStarTree<T,O>::Node::getValueIndex(const T& v) const
 }
 /********************************************************/
 template<typename T, int O>
-int BStarTree<T,O>::Node::getChildIndex(const Node*& n) const
-{
-    for(int i=0;i<numberOfKeys;++i)
-    {
-        if(children[i]==v) return i;
-    }
-}
-/********************************************************/
-template<typename T, int O>
 void BStarTree<T,O>::Node::addValue(const T& v)
 {                            
     int index = 0;
@@ -343,3 +322,16 @@ void BStarTree<T,O>::Node::remove(const T& v)
     }
     --numberOfKeys;
 } 
+/********************************************************/
+template<typename T, int O>
+int BStarTree<T,O>::Node::getChildIndex(const Node*& child) const
+{
+    int  index=-1;
+    for (int i = 0; i <=numberOfKeys; ++i) {
+            if (children[i] == child) {
+                index = i;
+                break;
+            }
+    }
+    return index;
+}
