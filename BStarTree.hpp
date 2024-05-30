@@ -1,9 +1,9 @@
 #ifndef B_STAR_TREE_HPP
 #define B_STAR_TREE_HPP
 
-#include "OrderedList.hpp"
 
-template<typename T>
+
+template<typename T, int O=4>
 class BStarTree
 {
 
@@ -13,7 +13,6 @@ class BStarTree
         ~BStarTree();
         BStarTree(const BStarTree& t);
         BStarTree& operator=(const BStarTree& t);
-
         void add(T v);
         void Delete(T v);
         bool isEmpty() const;
@@ -29,11 +28,10 @@ class BStarTree
       int degree;
       struct Node
       {   
-        Node(Node *p);        
-        Node(OrderedList<T> vals,DoubleLinkedList< Node* > s,Node *p=nullptr);
-        Node(T v,DoubleLinkedList< Node* > s, Node *p );
-        OrderedList<T> values;
-        DoubleLinkedList<Node*> children;
+        int numberOfElements;
+        Node();
+        Node*[O] values;
+        Node*[O] children;
         Node* parent;
         bool isLeaf() const;
         bool isRoot() const;
@@ -56,6 +54,7 @@ class BStarTree
         bool isOverloaded(const Node *subRoot) const;
         void splitLeft(Node *overloaded);
         void splitRight(Node *overloaded);
+        void splitRoot();
 
 };
 

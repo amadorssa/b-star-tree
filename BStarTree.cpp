@@ -2,66 +2,66 @@
 #include "Queue.hpp"
 #include <cmath>
 
-template<typename T>
-BStarTree<T>::BStarTree(int o): root(nullptr), numNodes(0),order(o) {};
+template<typename T,int O>
+BStarTree<T,O>::BStarTree(int o): root(nullptr), numNodes(0),order(o) {};
 /********************************************************/
-template<typename T>
-BStarTree<T>::~BStarTree()
+template<typename T,int O>
+BStarTree<T,O>::~BStarTree()
 {
     empty();
 }
 /********************************************************/
-template<typename T>
-BStarTree<T>::BStarTree(const BStarTree<T>& t): numNodes(0), root(nullptr)
+template<typename T, int O>
+BStarTree<T,O>::BStarTree(const BStarTree<T,O>& t): numNodes(0), root(nullptr)
 {
     *this=t;
 }
 /********************************************************/
-template<typename T>
-BStarTree<T>& BStarTree<T>::operator=(const BStarTree<T>& t)
+template<typename T, int O>
+BStarTree<T, O>& BStarTree<T,O>::operator=(const BStarTree<T,O>& t)
 {
 
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::add(T v)
+template<typename T, int O>
+void BStarTree<T,O>::add(T v)
 {
     add(v,root);
 }
 /********************************************************/
-template<typename T>
-bool BStarTree<T>::isEmpty() const
+template<typename T, int O>
+bool BStarTree<T,O>::isEmpty() const
 {
     return root==nullptr;
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::empty()
+template<typename T, int O>
+void BStarTree<T,O>::empty()
 {
     empty(root);
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::Delete(T v)
+template<typename T, int O>
+void BStarTree<T,O>::Delete(T v)
 {
     Delete(v,root);
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::print() const
+template<typename T,int O>
+void BStarTree<T,O>::print() const
 {
     print(root);
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::printBackwards() const
+template<typename T, int O>
+void BStarTree<T,O>::printBackwards() const
 {
     printBackwards(root);
 }
 
 /********************************************************/
-template<typename T>
-void BStarTree<T>::printByLevels() const
+template<typename T, int O>
+void BStarTree<T,O>::printByLevels() const
 {
     
 }
@@ -76,8 +76,8 @@ void BStarTree<T>::printByLevels() const
 
 
 /********************************************************/
-template<typename T>
-void BStarTree<T>::add(const T& v, Node*& subRoot)
+template<typename T, int O>
+void BStarTree<T,O>::add(const T& v, Node*& subRoot)
 {
     if(!subRoot->isLeaf()){
         int size = subRoot->values.getSize(), aux;
@@ -110,38 +110,38 @@ void BStarTree<T>::add(const T& v, Node*& subRoot)
     }
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::print(Node *subRoot) const
+template<typename T, int O>
+void BStarTree<T, O>::print(Node *subRoot) const
 {
 
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::printBackwards(Node *subRoot) const
+template<typename T,int O>
+void BStarTree<T,O>::printBackwards(Node *subRoot) const
 {
 
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::empty(Node *& subRoot)
+template<typename T, int O>
+void BStarTree<T,O>::empty(Node *& subRoot)
 {
 
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::Delete(T v, Node*& subRoot)
+template<typename T, int O>
+void BStarTree<T,O>::Delete(T v, Node*& subRoot)
 {
 
 }
 /********************************************************/
-template<typename T>
-bool BStarTree<T>::isFull(const Node*& subRoot) const
+template<typename T,int O>
+bool BStarTree<T,O>::isFull(const Node*& subRoot) const
 {
     return subRoot->values.GetSize() == order - 1;
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::rotateleft(Node *source, T v)
+template<typename T, int O>
+void BStarTree<T,O>::rotateleft(Node *source, T v)
 {
     //We store a reference to the parent's value that's to be used
     T& valueInParent=source->parent->values[source->parent->children.searchIndex(source)-1];
@@ -155,11 +155,11 @@ void BStarTree<T>::rotateleft(Node *source, T v)
     source->values.add(v);
     int help=0;
 
-
+}
 /********************************************************/
 
-template<typename T>
-typename BStarTree<T>::Node* BStarTree<T>::getLeftSibling(Node* actual)
+template<typename T, int O>
+typename BStarTree<T,O>::Node* BStarTree<T>::getLeftSibling(Node* actual)
 {   
     // Revisar si el nodo es la raíz
     if (actual == nullptr || actual->parent==nullptr){
@@ -189,8 +189,8 @@ typename BStarTree<T>::Node* BStarTree<T>::getLeftSibling(Node* actual)
 }
 /********************************************************/
 //Assumes ideal conditions. these conditions need to be verified outside of the method
-template<typename T>
-void BStarTree<T>::rotateRight(Node *source, T v)
+template<typename T, int O>
+void BStarTree<T,O>::rotateRight(Node *source, T v)
 {
                                                                                                                                                     //We store a reference to the parent's value that's to be used
     T& valueInParent=source->parent->values[source->parent->children.searchIndex(source)];
@@ -204,8 +204,8 @@ void BStarTree<T>::rotateRight(Node *source, T v)
     source->values.add(v);
 }
 
-template<typename T>
-typename BStarTree<T>::Node* BStarTree<T>::getRightSibling(Node* actual)
+template<typename T, int O>
+typename BStarTree<T,O>::Node* BStarTree<T>::getRightSibling(Node* actual)
 {
     // Revisar si el nodo es la raíz
     if (actual == nullptr || actual->parent==nullptr){
@@ -232,8 +232,8 @@ typename BStarTree<T>::Node* BStarTree<T>::getRightSibling(Node* actual)
     return parent->children[childIndex + 1];
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::splitRight(Node *overloaded)
+template<typename T, int O>
+void BStarTree<T,O>::splitRight(Node *overloaded)
 {
     //Declaration of list of values
     OrderedList<T> totalValues;
@@ -257,51 +257,35 @@ void BStarTree<T>::splitRight(Node *overloaded)
     Node *n1=new Node();
     Node *n2=new Node();
     Node *n3=new Node();
+    //We add them to an array in order to iterate through them
+    Node *nodes[3]={n1,n2,n3};
     //We fill said nodes, and push the corresponding values to the parent
-    for(int i=0;i<ceil((2*order)/3)-1;++i)
+    for(int i=0;i<3;++i)
     {
-        n1->values.add(totalValues.getFirst());
-        totalValues.deleteFirst();
-    }
-    parent->values.add(totalValues.getFirst());
-    totalValues.deleteFirst();
-    //Second node
-    for(int i=0;i<ceil((2*order)/3)-1;++i)
-    {
-        n2->values.add(totalValues.getFirst());
-        totalValues.deleteFirst();
-    }
-    parent->values.add(totalValues.getFirst());
-    totalValues.deleteFirst();
-    //Third node
-    for(int i=0;i<ceil((2*order)/3)-1;++i)
-    {
-        n3->values.add(totalValues.getFirst());
-        totalValues.deleteFirst();
-    }
-    parent->values.add(totalValues.getFirst());
-    totalValues.deleteFirst();
+        for(int j=0;i<ceil((2*order)/3)-1;++j)
+        {
+            nodes[i]->values.add(totalValues.getFirst());
+            totalValues.deleteFirst();
+        }
+        if(i<2)
+        {
+            parent->values.add(totalValues.getFirst());
+            totalValues.deleteFirst();
+        }   
+    }   
     //We check if the queue isn't empty(it would mean we're in a leaf scenario)
     if(!totalChildren.isEmpty())
     {
-        //We add the children to the respective nodes
-        for(int i=0;i<ceil((2*order)/3);++i)
+        for(int i=0;i<3;++i)
         {
-            n3->children.add(totalChildren.getFront());
-            totalChildren.dequeue();
+            //We add the children to the respective nodes
+            for(int j=0;i<ceil((2*order)/3);++j)
+            {
+                n[i]->children.addBack(totalChildren.getFront());
+                totalChildren.dequeue();
+            }
         }
-        //second node
-        for(int i=0;i<ceil((2*order)/3);++i)
-        {
-            n2->children.add(totalChildren.getFront());
-            totalChildren.dequeue();
-        }
-        //third node
-        for(int i=0;i<ceil((2*order)/3);++i)
-        {
-            n1->children.add(totalChildren.getFront());
-            totalChildren.dequeue();
-        }
+        
     }
     //we add the new nodes to the parent node
     parent->children.add(n3,mostRightPosition);
@@ -314,6 +298,12 @@ void BStarTree<T>::splitRight(Node *overloaded)
     //We check if the parent didn't become overloaded itself, and handle the situation
     if(isOverloaded(parent))
     {
+        //We check if the parent node is the root, since the procedure is different
+        if(parent->isRoot())
+        {
+            splitRoot();
+            return;
+        }
         //We check if we can perform a rotation, and do so if possible
         Node *leftS = parent->getLeftSibling();
             if(leftS != nullptr && !isFull(leftS)){
@@ -331,15 +321,10 @@ void BStarTree<T>::splitRight(Node *overloaded)
     }
 }
 /********************************************************/
-template<typename T>
-void BStarTree<T>::splitLeft(Node *overloaded)
+template<typename T, int O>
+void BStarTree<T,O>::splitLeft(Node *overloaded)
 {
-    //We handle the case where the overloaded node is the Root, since the overload criteria is different
-    if(overloaded->isRoot())
-    {
-
-    }
-        //Declaration of list of values
+       //Declaration of list of values
     OrderedList<T> totalValues;
     //We save relevant memory locations
     Node *sibling=getLeftSibling(overloaded);
@@ -361,51 +346,35 @@ void BStarTree<T>::splitLeft(Node *overloaded)
     Node *n1=new Node();
     Node *n2=new Node();
     Node *n3=new Node();
+    //We add them to an array in order to iterate through them
+    Node *nodes[3]={n1,n2,n3};
     //We fill said nodes, and push the corresponding values to the parent
-    for(int i=0;i<ceil((2*order)/3)-1;++i)
+    for(int i=0;i<3;++i)
     {
-        n1->values.add(totalValues.getFirst());
-        totalValues.deleteFirst();
-    }
-    parent->values.add(totalValues.getFirst());
-    totalValues.deleteFirst();
-    //Second node
-    for(int i=0;i<ceil((2*order)/3)-1;++i)
-    {
-        n2->values.add(totalValues.getFirst());
-        totalValues.deleteFirst();
-    }
-    parent->values.add(totalValues.getFirst());
-    totalValues.deleteFirst();
-    //Third node
-    for(int i=0;i<ceil((2*order)/3)-1;++i)
-    {
-        n3->values.add(totalValues.getFirst());
-        totalValues.deleteFirst();
-    }
-    parent->values.add(totalValues.getFirst());
-    totalValues.deleteFirst();
+        for(int j=0;i<ceil((2*order)/3)-1;++j)
+        {
+            nodes[i]->values.add(totalValues.getFirst());
+            totalValues.deleteFirst();
+        }
+        if(i<2)
+        {
+            parent->values.add(totalValues.getFirst());
+            totalValues.deleteFirst();
+        }   
+    }   
     //We check if the queue isn't empty(it would mean we're in a leaf scenario)
     if(!totalChildren.isEmpty())
     {
-        //We add the children to the respective nodes
-        for(int i=0;i<ceil((2*order)/3);++i)
+        for(int i=0;i<3;++i)
         {
-            n3->children.add(totalChildren.getFront());
-            totalChildren.dequeue();
+            //We add the children to the respective nodes
+            for(int j=0;i<ceil((2*order)/3);++j)
+            {
+                n[i]->children.addBack(totalChildren.getFront());
+                totalChildren.dequeue();
+            }
         }
-        //second node
-        for(int i=0;i<ceil((2*order)/3);++i)
-        {
-            n2->children.add(totalChildren.getFront());
-            totalChildren.dequeue();
-        }
-        //third node
-        for(int i=0;i<ceil((2*order)/3);++i)
-        {
-            n1->children.add(totalChildren.getFront());
-            totalChildren.dequeue();
-        }
+        
     }
     //we add the new nodes to the parent node
     parent->children.add(n3,mostRightPosition);
@@ -418,6 +387,12 @@ void BStarTree<T>::splitLeft(Node *overloaded)
     //We check if the parent didn't become overloaded itself, and handle the situation
     if(isOverloaded(parent))
     {
+        //We check if the parent node is the root, since the procedure is different
+        if(parent->isRoot())
+        {
+            splitRoot();
+            return;
+        }
         //We check if we can perform a rotation, and do so if possible
         Node *leftS = parent->getLeftSibling();
             if(leftS != nullptr && !isFull(leftS)){
@@ -435,10 +410,57 @@ void BStarTree<T>::splitLeft(Node *overloaded)
     }
 }
 /********************************************************/
-template<typename T>
-bool BStarTree<T>::isOverloaded(const Node *subRoot) const
+template<typename T, int O>
+void BStarTree<T,O>::splitRoot()
 {
-    return subRoot->values.getSize()>=order;
+    //In this case we have both the full list of values and the full list(which can be treated as a queue) fo children
+    //We create a new root
+    root->parent=new Node();
+    Node *newRoot=root->parent;
+    //We create 3 new nodes, which are the splits that will happen in the root
+    Node *n1=new Node();
+    Node *n2=new Node();
+    Node *n3=new Node();
+    //We add them to an array
+    Node *nodes[3]={n1,n2,n3};
+    //We add the values to the new nodes, as well as the new root
+    for(int i=0;i<3;++i)
+    {
+        for(int j=0;j<ceil((2*order)/3)-1;++j)
+        {
+            node[i]->values.add(root->values.getFirst());
+            root->values.deleteFirst();
+        }
+        if(i<2)
+        {
+             newRoot->values.add(root->values.getFirst());
+             root->values.deleteFirst();
+        }
+    }
+    //we add the root's children to the corresponding nodes, if it has any
+    if(!root.isLeaf())
+    {
+        for(int i=0;i<3;++i)
+        {
+            //We add the children to the respective nodes
+            for(int j=0;i<ceil((2*order)/3);++j)
+            {
+                n[i]->children.addBack(root->children.getFront());
+                root->children.removeFront();
+            }
+        } 
+    }
+    //We remove the root from the new root's children list
+    newRoot->children.remove(root);
+    //
+
+}
+/********************************************************/
+template<typename T, int O>
+bool BStarTree<T,O>::isOverloaded(const Node *subRoot) const
+{
+    if(!isRoot(subRoot)) return subRoot->values.getSize()>=order;
+    else return subRoot->value.getSize()>3*order+2;
 }
 
 
@@ -447,34 +469,26 @@ bool BStarTree<T>::isOverloaded(const Node *subRoot) const
 //NODE METHODS
 /********************************************************/
 
-template<typename T>
-bool BStarTree<T>::Node::isLeaf() const
-{
-    return children.isEmpty();
-}
-
-
-/********************************************************/
-template<typename T>
-BStarTree<T>::Node::Node(OrderedList<T> vals,DoubleLinkedList<Node*> s, Node *p): values(vals),children(s), parent(p){}
-/********************************************************/
-template<typename T>
-BStarTree<T>::Node::Node(T v,DoubleLinkedList<Node*> s, Node *p): children(s), parent(p)
-{
-    values.add(v);
-}
-/********************************************************/
-template<typename T>
-BStarTree<T>::Node::Node(Node *p): parent(p){}
-/********************************************************/
-template<typename T>
-bool BStarTree<T>::Node::isLeaf() const
+template<typename T,int O>
+bool BStarTree<T,O>::Node::isLeaf() const
 {
     return children.isEmpty();
 }
 /********************************************************/
-template<typename T>
-bool BStarTree<T>::Node::isRoot() const
+template<typename T, int O>
+BStarTree<T,O>::Node::Node(): numberOfElements(0)
+{
+    
+}
+/********************************************************/
+template<typename T, int O>
+bool BStarTree<T,O>::Node::isLeaf() const
+{
+    return children[0]==nullptr;
+}
+/********************************************************/
+template<typename T, int O>
+bool BStarTree<T,O>::Node::isRoot() const
 {
     return parent==nullptr;
 }
