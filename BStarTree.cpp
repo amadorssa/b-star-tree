@@ -334,6 +334,11 @@ void BStarTree<T>::splitRight(Node *overloaded)
 template<typename T>
 void BStarTree<T>::splitLeft(Node *overloaded)
 {
+    //We handle the case where the overloaded node is the Root, since the overload criteria is different
+    if(overloaded->isRoot())
+    {
+
+    }
         //Declaration of list of values
     OrderedList<T> totalValues;
     //We save relevant memory locations
