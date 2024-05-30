@@ -26,7 +26,7 @@ class BStarTree
       struct Node
       {   
         Node(Node *p);
-        int numberOfElements;
+        int numberOfKeys;
         int maxCapacity;
         int minCapacity;   
         T *values;

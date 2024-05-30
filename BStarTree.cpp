@@ -288,7 +288,7 @@ bool BStarTree<T,O>::Node::isLeaf() const
 template<typename T, int O>
 BStarTree<T,O>::Node::Node(Node *p)
 {
-    numberOfElements=0;
+    numberOfKeys=0;
     parent=p;
     if(isRoot())
     {
@@ -324,20 +324,20 @@ bool BStarTree<T,O>::Node::isRoot() const
 template<typename T, int O>
 bool BStarTree<T,O>::Node::isOverloaded() const
 {
-    return numberOfElements>maxCapacity; 
+    return numberOfKeys>maxCapacity; 
 }
 /********************************************************/
 template<typename T, int O>
 bool BStarTree<T,O>::Node::isFull() const
 {
-    return numberOfElements==maxCapacity;
+    return numberOfKeys==maxCapacity;
 }
 
 /********************************************************/
 template<typename T, int O>
 int BStarTree<T,O>::Node::getValueIndex(const T& v) const
 {
-    for(int i=0;i<numberOfElements;++i)
+    for(int i=0;i<numberOfKeys;++i)
     {
         if(values[i]==v) return i;
     }
@@ -346,7 +346,7 @@ int BStarTree<T,O>::Node::getValueIndex(const T& v) const
 template<typename T, int O>
 int BStarTree<T,O>::Node::getChildIndex(const Node*& n) const
 {
-    for(int i=0;i<numberOfElements;++i)
+    for(int i=0;i<numberOfKeys;++i)
     {
         if(children[i]==v) return i;
     }
@@ -356,16 +356,16 @@ template<typename T, int O>
 void BStarTree<T,O>::Node::addValue(const T& v)
 {                            
     int index = 0;
-    for(index; index < numberOfElements; ++index){
+    for(index; index < numberOfKeys; ++index){
         if(values[index] == v) return;
         if(values[index] < v) break;
     }
 
-    for(int i = index; i < numberOfElements; ++i)
+    for(int i = index; i < numberOfKeys; ++i)
         values[i + 1] = values[i];
     
     values[index] = v;
-    ++numberOfElements;
+    ++numberOfKeys;
 
 }
 /********************************************************/
@@ -373,9 +373,9 @@ template<typename T, int O>
 void BStarTree<T,O>::Node::remove(const T& v)
 {
     int index=getIndex(v);
-    for(int i=index;i<numberOfElements;++i)
+    for(int i=index;i<numberOfKeys;++i)
     {
         values[i]=values[i+1];
     }
-    --numberOfElements;
+    --numberOfKeys;
 } 
