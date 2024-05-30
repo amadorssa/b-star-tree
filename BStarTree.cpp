@@ -159,8 +159,7 @@ template<typename T, int O>
 void BStarTree<T,O>::rotateleft(Node *source, T v)
 {
     // We store a reference to the parent's value that's to be used
-    T &valueInParent =
-        source->parent->values[source->parent->children.searchIndex(source) - 1];
+    T &valueInParent =source->parent->values[source->parent->getChildIndex(source) - 1];
     // puts the parent's value in the left sibling
     source->getLeftSibling(source)->values.add(valueInParent);
     // puts the first value from the source into the parent
@@ -380,11 +379,20 @@ bool BStarTree<T,O>::Node::isFull() const
 
 /********************************************************/
 template<typename T, int O>
-int BStarTree<T,O>::Node::getIndex(const T& v) const
+int BStarTree<T,O>::Node::getValueIndex(const T& v) const
 {
     for(int i=0;i<numberOfElements;++i)
     {
         if(values[i]==v) return i;
+    }
+}
+/********************************************************/
+template<typename T, int O>
+int BStarTree<T,O>::Node::getChildIndex(const Node*& n) const
+{
+    for(int i=0;i<numberOfElements;++i)
+    {
+        if(children[i]==v) return i;
     }
 }
 /********************************************************/

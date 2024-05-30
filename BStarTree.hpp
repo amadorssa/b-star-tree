@@ -34,7 +34,8 @@ class BStarTree
         Node* parent;
         bool isLeaf() const;
         bool isRoot() const;
-        int getIndex(const T& v) const;
+        int getValueIndex(const T& v) const;
+        int getChildIndex(const Node*& n) const;
         void remove(const T& v);
         void add(const T& v);
         void empty();
