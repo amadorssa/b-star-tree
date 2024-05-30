@@ -7,7 +7,7 @@ class BStarTree
 
     public:
 
-        BStarTree(int o);
+        BStarTree();
         ~BStarTree();
         BStarTree(const BStarTree& t);
         BStarTree& operator=(const BStarTree& t);
@@ -22,7 +22,6 @@ class BStarTree
 
     private://attributes
   
-      int order;
       struct Node
       {   
         Node(Node *p);
