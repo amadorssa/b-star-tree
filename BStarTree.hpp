@@ -22,7 +22,6 @@ class BStarTree
 
     private://attributes
   
-      int order;
       struct Node
       {   
         Node(Node *p);
@@ -55,8 +54,6 @@ class BStarTree
         Node* getRightSibling(Node* n);
         void rotateleft(Node *source, T v);
         void rotateRight(Node *source, T v); 
-        bool isFull(const Node*& subRoot) const;
-        bool isOverloaded(const Node *subRoot) const;
         void splitLeft(Node *overloaded);
         void splitRight(Node *overloaded);
         void splitRoot();
