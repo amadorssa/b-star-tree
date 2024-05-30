@@ -24,8 +24,8 @@ class BStarTree
   
       struct Node
       {   
-        Node::Node(Node* p) : parent(p), numberOfElements(0), values(new T[O]), children(new Node*[O+1]) {}
-        int numberOfElements;
+        Node(Node *p);
+        int numberOfKeys;
         int maxCapacity;
         int minCapacity;   
         T *values;
@@ -34,7 +34,7 @@ class BStarTree
         bool isLeaf() const;
         bool isRoot() const;
         int getValueIndex(const T& v) const;
-        int getChildIndex(const Node*& n) const;
+        int getChildIndex(const Node*& child) const;
         void remove(const T& v);
         void addValue(const T& v);
         void empty();
