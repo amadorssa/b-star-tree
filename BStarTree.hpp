@@ -23,16 +23,23 @@ class BStarTree
     private://attributes
   
       int order;
-      int degree;
       struct Node
       {   
+        Node(Node *p);
         int numberOfElements;
-        Node();
-        Node*[O] values;
-        Node*[O] children;
+        int maxCapacity;
+        int minCapacity;   
+        T *values;
+        Node* *children;
         Node* parent;
         bool isLeaf() const;
         bool isRoot() const;
+        int getIndex(const T& v) const;
+        void remove(const T& v);
+        void add(const T& v);
+        void empty();
+        bool isFull() const;
+        bool isOverloaded() const;
       };
       Node *root;
       int numNodes;
@@ -53,6 +60,7 @@ class BStarTree
         void splitLeft(Node *overloaded);
         void splitRight(Node *overloaded);
         void splitRoot();
+        bool search(T &value,const Node*&subRoot) const;
 
 };
 

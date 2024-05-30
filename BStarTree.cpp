@@ -18,8 +18,10 @@ BStarTree<T,O>::BStarTree(const BStarTree<T,O>& t): numNodes(0), root(nullptr)
 
 /********************************************************/
 template<typename T, int O>
-BStarTree<T, O>& BStarTree<T,O>::operator=(const BStarTree<T,O>& t)
+BStarTree<T,O>& BStarTree<T,O>::operator=(const BStarTree<T,O>& t)
 {
+
+}
 /********************************************************/
 template<typename T, int O>
 void BStarTree<T,O>::add(T v)
@@ -128,7 +130,7 @@ void BStarTree<T,O>::empty(Node *& subRoot)
 
 }
 /********************************************************/
-template <typename T> void BStarTree<T>::empty(Node *&subRoot) {
+template <typename T, int O> void BStarTree<T,O>::empty(Node *&subRoot) {
     if (subRoot != nullptr) {
         int nm = subRoot->children.getSize();
         for (int i = 0; i < nm; ++i)
@@ -172,7 +174,7 @@ void BStarTree<T,O>::rotateleft(Node *source, T v)
 /********************************************************/
 
 template<typename T, int O>
-typename BStarTree<T,O>::Node* BStarTree<T>::getLeftSibling(Node* actual)
+typename BStarTree<T,O>::Node* BStarTree<T,O>::getLeftSibling(Node* actual)
 {   
 // Revisar si el nodo es la raíz
     if (actual == nullptr || actual->parent == nullptr) {
@@ -216,7 +218,7 @@ void BStarTree<T,O>::rotateRight(Node *source, T v)
 }
 
 template<typename T, int O>
-typename BStarTree<T,O>::Node* BStarTree<T>::getRightSibling(Node* actual)
+typename BStarTree<T,O>::Node* BStarTree<T,O>::getRightSibling(Node* actual)
 {
     // Revisar si el nodo es la raíz
     if (actual == nullptr || actual->parent == nullptr) {
@@ -303,17 +305,11 @@ void BStarTree<T,O>::splitRoot()
     //
 
 }
-/********************************************************/
-template<typename T, int O>
-bool BStarTree<T,O>::isOverloaded(const Node *subRoot) const
-{
-    if(!isRoot(subRoot)) return subRoot->values.getSize()>=order;
-    else return subRoot->value.getSize()>3*order+2; 
-}
+
 
 /********************************************************/
-template <typename T>
-bool BStarTree<T>::search(T &value, const Node *&subRoot) const {
+template <typename T,int O>
+bool BStarTree<T,O>::search(T &value, const Node *&subRoot) const {
     int i = 0;
     for (i; i < order - 1; ++i) {
         if (value == subRoot->values[i])
@@ -335,9 +331,27 @@ bool BStarTree<T,O>::Node::isLeaf() const
 }
 /********************************************************/
 template<typename T, int O>
-BStarTree<T,O>::Node::Node(): numberOfElements(0)
+BStarTree<T,O>::Node::Node(Node *p)
 {
-    
+    numberOfElements=0;
+    parent=p;
+    if(isRoot())
+    {
+        //set minimun and maximum KEY capacitites
+        minCapacity=1;
+        maxCapacity=3*O+2;
+    }
+    else
+    {
+        //set minimun and maximum KEY capacitites
+        minCapacity=ceil((2*O)/3)-1;
+        maxCapacity=O-1;
+    }
+    T auxVals[maxCapacity+1];//one more in case it overloads
+    Node *auxChldrn[maxCapacity+2];//one more in case it overloads
+
+    values=auxVals;
+    children=auxChldrn;
 }
 /********************************************************/
 template<typename T, int O>
@@ -351,4 +365,53 @@ bool BStarTree<T,O>::Node::isRoot() const
 {
     return parent==nullptr;
 }
+/********************************************************/
+template<typename T, int O>
+bool BStarTree<T,O>::Node::isOverloaded() const
+{
+    return numberOfElements>maxCapacity; 
+}
+/********************************************************/
+template<typename T, int O>
+bool BStarTree<T,O>::Node::isFull() const
+{
+    return numberOfElements==maxCapacity;
+}
 
+/********************************************************/
+template<typename T, int O>
+int BStarTree<T,O>::Node::getIndex(const T& v) const
+{
+    for(int i=0;i<numberOfElements;++i)
+    {
+        if(values[i]==v) return i;
+    }
+}
+/********************************************************/
+template<typename T, int O>
+void BStarTree<T,O>::Node::add(const T& v)
+{                            
+    int index = 0;
+    for(index; index < numberOfElements; ++index){
+        if(values[index] == v) return;
+        if(values[index] < v) break;
+    }
+
+    for(int i = index; i < numberOfElements; ++i)
+        values[i + 1] = values[i];
+    
+    values[index] = v;
+    ++numberOfElements;
+
+}
+/********************************************************/
+template<typename T, int O>
+void BStarTree<T,O>::Node::remove(const T& v)
+{
+    int index=getIndex(v);
+    for(int i=index;i<numberOfElements;++i)
+    {
+        values[i]=values[i+1];
+    }
+    --numberOfElements;
+} 
