@@ -2,7 +2,7 @@
 #include <cmath>
 
 template <typename T, int O>
-BStarTree<T, O>::BStarTree(int o) : root(nullptr), numNodes(0), order(o){};
+BStarTree<T, O>::BStarTree() : root(nullptr), numNodes(0) {};
 /********************************************************/
 template <typename T, int O> BStarTree<T, O>::~BStarTree() { empty(); }
 /********************************************************/
@@ -103,11 +103,7 @@ template <typename T, int O> void BStarTree<T, O>::empty(Node *&subRoot) {
 
 template <typename T, int O>
 void BStarTree<T, O>::Delete(T v, Node *&subRoot) {}
-/********************************************************/
-template <typename T, int O>
-bool BStarTree<T, O>::isFull(const Node *&subRoot) const {
-    return subRoot->values.GetSize() == order - 1;
-}
+
 /********************************************************/
 template <typename T, int O>
 void BStarTree<T, O>::rotateleft(Node *source, T v) {
@@ -217,8 +213,8 @@ template <typename T, int O> void BStarTree<T, O>::splitRoot() {
     Node *nodes[3] = {n1, n2, n3};
     // We add the values to the new nodes, as well as the new root
     for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < ceil((2 * order) / 3) - 1; ++j) {
-            node[i]->values.add(root->values.getFirst());
+        for (int j = 0; j < ceil((2 * O) / 3) - 1; ++j) {
+            nodes[i]->values.add(root->values.getFirst());
             root->values.deleteFirst();
         }
         if (i < 2) {
@@ -227,11 +223,11 @@ template <typename T, int O> void BStarTree<T, O>::splitRoot() {
         }
     }
     // we add the root's children to the corresponding nodes, if it has any
-    if (!root.isLeaf()) {
+    if (!root->isLeaf()) {
         for (int i = 0; i < 3; ++i) {
             // We add the children to the respective nodes
-            for (int j = 0; i < ceil((2 * order) / 3); ++j) {
-                n[i]->children.addBack(root->children.getFront());
+            for (int j = 0; i < ceil((2 * O) / 3); ++j) {
+                nodes[i]->children.addBack(root->children.getFront());
                 root->children.removeFront();
             }
         }
@@ -245,7 +241,7 @@ template <typename T, int O> void BStarTree<T, O>::splitRoot() {
 template <typename T, int O>
 bool BStarTree<T, O>::search(T &value, const Node *&subRoot) const {
     int i = 0;
-    for (i; i < order - 1; ++i) {
+    for (i; i < subRoot->numberOfElements; ++i) {
         if (value == subRoot->values[i])
             return true;
         if (value < subRoot->values[i])
