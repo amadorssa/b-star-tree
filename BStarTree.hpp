@@ -1,8 +1,6 @@
 #ifndef B_STAR_TREE_HPP
 #define B_STAR_TREE_HPP
 
-
-
 template<typename T, int O=4>
 class BStarTree
 {
@@ -58,4 +56,4 @@ class BStarTree
 
 };
 
-#endif//B_STAR_TREE_HPP
+#endif // B_STAR_TREE_HPP
