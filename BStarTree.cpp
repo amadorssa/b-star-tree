@@ -322,20 +322,18 @@ bool BStarTree<T,O>::Node::isLeaf() const
 }
 /********************************************************/
 template<typename T, int O>
-BStarTree<T,O>::Node::Node(Node *p)
+BStarTree<T,O>::Node::Node(Node *p) : parent(p), numberOfElements(0) 
 {
-    numberOfElements=0;
-    parent=p;
     if(isRoot())
     {
-        //set minimun and maximum KEY capacitites
+        //set minimun and maximum KEY capacitites for a root node
         minCapacity=1;
         maxCapacity=3*O+2;
     }
     else
     {
-        //set minimun and maximum KEY capacitites
-        minCapacity=ceil((2*O)/3)-1;
+        //set minimun and maximum KEY capacitites for a non-root node
+        minCapacity=std::ceil((2*O)/3)-1;
         maxCapacity=O-1;
     }
     T auxVals[maxCapacity+1];//one more in case it overloads
