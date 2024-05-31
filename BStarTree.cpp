@@ -373,6 +373,8 @@ void BStarTree<T, O>::splitRoot()
     newRoot->addChild(n1,0);
     // We delete the old root
     delete root;
+    //we point the root to the new root
+    root=newRoot;
 }
 
 /********************************************************/
