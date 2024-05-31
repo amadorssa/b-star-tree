@@ -288,7 +288,7 @@ void BStarTree<T, O>::split(Node *leftNode,Node *rightNode )
     //we check if the parent itself became overloaded
     if(parent.isOverloaded())
     {
-        if(parent.isRoot) splitRoot;
+        if(parent.isRoot) splitRoot();
         else
         {
             Node *leftS = parent->getLeftSibling();
