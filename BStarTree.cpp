@@ -2,7 +2,10 @@
 #include <cmath>
 
 template <typename T, int O>
-BStarTree<T, O>::BStarTree() : root(nullptr), numNodes(0) {};
+BStarTree<T, O>::BStarTree() : root(nullptr), numNodes(0)
+ {
+    if(O<4) throw "B* trees must be of at least order 4";
+ };
 /********************************************************/
 template <typename T, int O> BStarTree<T, O>::~BStarTree() { empty(); }
 /********************************************************/
@@ -63,17 +66,17 @@ void BStarTree<T, O>::add(const T &v, Node *&subRoot) {
             subRoot->addValue(v); // If the node isnt full , just add.
         else {
             Node *leftS = subRoot->getLeftSibling();
-            if (leftS != nullptr && !isFull(leftS)) {
+            if (leftS != nullptr && !leftS->isFull()) {
                 lendToLeft(subRoot);
             } else {
                 Node *rightS = subRoot->getRightSibling();
-                if (rightS != nullptr && !isFull(rightS)) {
+                if (rightS != nullptr && !rightS->isFull()) {
                     lendToRight(subRoot);
                 } else {
-                    if (leftS != nullptr)
-                        splitLeft(subRoot);
+                    if (rightS != nullptr)
+                        split(subRoot, rightS);
                     else
-                        splitRight(subRoot);
+                        split(leftS, subRoot);
                 }
             }
         }
@@ -179,48 +182,197 @@ typename BStarTree<T,O>::Node* BStarTree<T,O>::Node::getRightSibling() {
 
 /********************************************************/
 template <typename T, int O>
-void BStarTree<T, O>::splitRight(Node *overloaded) {}
+void BStarTree<T, O>::split(Node *leftNode,Node *rightNode )
+ {
+    //We store a reference to the parent
+    Node *parent=leftNode->parent;
+    //The keys's selection order will be keys from left node, key from parent and keys from rgiht node
+    //We create the new nodes
+    Node *n1= new Node(parent);
+    Node *n2= new Node(parent);
+    Node *n3= new Node(parent);
 
-/********************************************************/
-template <typename T, int O>
-void BStarTree<T, O>::splitLeft(Node *overloaded) {}
+    //We create an array with the values we'll be handing to the two nodes, and hand them
+    T valuesToGive[2*O];
+    //we create an index to store the valuesToGive's
+    int indexValues=0;
+    //add the elements from the left node
+    for(int i=0; i<leftNode->numberOfKeys;++i)
+    {
+        valuesToGive[i]=leftNode->values[i];
+        indexValues++;
+    }
+    //add the element from the parent
+    valuesToGive[indexValues]=parent->values[parent->getChildIndex(leftNode)];
+    indexValues++;
+    //add the elements from the right node
+    for(int i=0; i<rightNode->numberOfKeys;++i)
+    {
+        valuesToGive[indexValues]=rightNode->values[i];
+        indexValues++;
+    }
 
-/********************************************************/
-template <typename T, int O> void BStarTree<T, O>::splitRoot() {
-    // In this case we have both the full list of values and the full list(which
-    // can be treated as a queue) fo children We create a new root
-    root->parent = new Node();
-    Node *newRoot = root->parent;
-    // We create 3 new nodes, which are the splits that will happen in the root
-    Node *n1 = new Node();
-    Node *n2 = new Node();
-    Node *n3 = new Node();
-    // We add them to an array
-    Node *nodes[3] = {n1, n2, n3};
-    // We add the values to the new nodes, as well as the new root
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < ceil((2 * O) / 3) - 1; ++j) {
-            nodes[i]->values.add(root->values.getFirst());
-            root->values.deleteFirst();
+    //we reset the index since we'll be needing it for the transfers to the new nodes
+    indexValues=0;
+    //we fill the first node
+    for(indexValues;indexValues<leftNode->minCapacity;++indexValues)
+    {
+        n1->addValue(valuesToGive[indexValues]);
+    }
+    //We give one value to the parent
+    parent->addValue(valuesToGive[indexValues]);
+    indexValues++;
+    //we fill the second node
+    for(indexValues;indexValues<leftNode->minCapacity;++indexValues)
+    {
+        n2->addValue(valuesToGive[indexValues]);
+    }
+    //we give one value to the parent
+    parent->addValue(valuesToGive[indexValues]);
+    indexValues++;
+    //we fill the last node
+    for(indexValues;indexValues<2*O;++indexValues)
+    {
+        n3->addValue(valuesToGive[indexValues]);
+    }
+
+    //we check if one of the nodes has children, so we know if we're splitting roots or branches
+    if(!leftNode->isLeaf())
+    {
+        //we create an array with pointers pointing to splitting nodes' children
+        Node *childrenToGive[2*O+1];
+        //we create a different index, for clarity
+        int indexChildren=0;
+        //we add the left node's children
+        for(int i=0;i<leftNode->numberOfKeys+1;++i)
+        {
+            childrenToGive[indexChildren]=leftNode->children[i];
+            indexChildren++;
         }
-        if (i < 2) {
-            newRoot->values.add(root->values.getFirst());
-            root->values.deleteFirst();
+        //we add the right node's children
+        for(int i=0;i<rightNode->numberOfKeys+1;++i)
+        {
+            childrenToGive[indexChildren]=rightNode->children[i];
+            indexChildren++;
+        }
+        //we reset indexChildren
+        indexChildren=0;
+        //we add the corresponding children to the first node
+        for(int i=0;i<n1->numberOfKeys+1;++i)
+        {
+            n1->addChild(childrenToGive[indexChildren],i);
+            indexChildren++;
+        }
+        //we add the corresponding children to the second node
+        for(int i=0;i<n2->numberOfKeys+1;++i)
+        {
+            n1->addChild(childrenToGive[indexChildren],i);
+            indexChildren++;
+        }
+        //we add the corresponding children to the third node
+        for(int i=0;i<n3->numberOfKeys+1;++i)
+        {
+            n1->addChild(childrenToGive[indexChildren],i);
+            indexChildren++;
         }
     }
-    // we add the root's children to the corresponding nodes, if it has any
-    if (!root->isLeaf()) {
-        for (int i = 0; i < 3; ++i) {
-            // We add the children to the respective nodes
-            for (int j = 0; i < ceil((2 * O) / 3); ++j) {
-                nodes[i]->children.addBack(root->children.getFront());
-                root->children.removeFront();
+    //we remove the current nodes from the parent
+    parent.removeChild(leftNode);
+    parent.removeChild(rightNode);
+    //we add the new nodes to the parent
+    parent.addChild(n3,0);
+    parent.addChild(n2,0);
+    parent.addChild(n1,0);
+    //we check if the parent itself became overloaded
+    if(parent.isOverloaded())
+    {
+        if(parent.isRoot) splitRoot;
+        else
+        {
+            Node *leftS = parent->getLeftSibling();
+            if (leftS != nullptr && !leftS->isFull()) lendToLeft(parent);
+            else
+            {
+                Node *rightS = parent->getRightSibling();
+                if (rightS != nullptr && !rightS->isFull()) lendToRight(parent);
+                else
+                {
+                    if (rightS != nullptr) split(parent, rightS);
+                    else split(leftS, parent);
+                }
             }
         }
     }
-    // We remove the root from the new root's children list
-    newRoot->children.remove(root);
-    //
+}
+ 
+/********************************************************/
+template <typename T, int O>
+void BStarTree<T, O>::splitRoot()
+{
+    //We create a new root
+    root->parent = new Node(nullptr);
+    Node *newRoot = root->parent;
+    // We create 3 new nodes, which are the splits that will happen in the root
+    Node *n1 = new Node(newRoot);
+    Node *n2 = new Node(newRoot);
+    Node *n3 = new Node(newRoot);
+    //We create an int to store the index of the keys in the root
+    int  indexRoot=0;
+    //We store the minimum amount of keys required in a branch node
+    int minKeys=(2/3)*(O-1);
+    //We add the values to the new nodes, as well as the new root
+    for(int i=0;i<minKeys;++i)
+    {
+        n1->addValue(root->values[indexRoot]);
+        indexRoot++;
+    }
+    //We add a value to the new root
+    newRoot->addValue(root->values[indexRoot]);
+    indexRoot++;
+    //second node
+    for(int i=0;i<minKeys;++i)
+    {
+        n2->addValue(root->values[indexRoot]);
+        indexRoot++;
+    }
+    //We add a value to the new root
+    newRoot->addValue(root->values[indexRoot]);
+    indexRoot++;
+    //third node
+    for(indexRoot;indexRoot<root->maxCapacity;++indexRoot)
+    {
+        n3->addValue(root->values[indexRoot]);
+        indexRoot++;
+    }
+    //we reset indexRoot
+    indexRoot=0;
+    // we add the root's children to the corresponding nodes, if it has any
+    if (!root->isLeaf())
+    {
+        //we add corresponding children to first node
+        for(int i=0;i<n1->numberOfKeys+1;++i)
+        {
+            n1->addChild(root->children[indexRoot]);
+            indexRoot++;
+        }
+        //we add the corresponding children to the second node
+        for(int i=0;i<n2->numberOfKeys+1;++i)
+        {
+            n1->addChild(root->children[indexRoot]);
+            indexRoot++;
+        }
+        //we add the corresponding children to the third root
+        for(int i=0;i<n3->numberOfKeys+1;++i)
+        {
+            n3->addChild(root->children[indexRoot]);
+        }
+    }
+    //we add the new nodes to the new root
+    newRoot->addChild(n3,0);
+    newRoot->addChild(n2,0);
+    newRoot->addChild(n1,0);
+    // We delete the old root
+    delete root;
 }
 
 /********************************************************/
@@ -250,12 +402,12 @@ BStarTree<T,O>::Node::Node(Node *p) : parent(p), numberOfElements(0)
     {
         //set minimun and maximum KEY capacitites for a root node
         minCapacity=1;
-        maxCapacity=3*O+2;
+        maxCapacity=3*O+1;
     }
     else
     {
         //set minimun and maximum KEY capacitites for a non-root node
-        minCapacity=std::ceil((2*O)/3)-1;
+        minCapacity=(2/3)*(O-1);
         maxCapacity=O-1;
     }
     T auxVals[maxCapacity + 1];       // one more in case it overloads
@@ -313,10 +465,21 @@ void BStarTree<T,O>::Node::addValue(const T& v)
 }
 /********************************************************/
 template<typename T, int O>
-void BStarTree<T,O>::Node::remove(const T& v)
+void BStarTree<T,O>::Node::addChild(Node *child,int pos)
 {
-    int index=getIndex(v);
-    for(int i=index;i<numberOfKeys;++i)
+    //we can derive number of children from number of keys
+    for(int i=numberOfKeys;i>pos-1;--i)
+    {
+        children[i]=children[i-1];
+    }
+    children[pos]=child;
+}
+/********************************************************/
+template<typename T, int O>
+void BStarTree<T,O>::Node::removeValue(const T& v)
+{
+    int index=getValueIndex(v);
+    for(int i=index;i<numberOfKeys-1;++i)
     {
         values[i]=values[i+1];
     }
@@ -324,7 +487,22 @@ void BStarTree<T,O>::Node::remove(const T& v)
 } 
 /********************************************************/
 template<typename T, int O>
-int BStarTree<T,O>::Node::getChildIndex(const Node*& child) const
+void BStarTree<T,O>::Node::removeChild(const Node *child)
+{
+    int index=0;
+    for(index;index<numberOfKeys+1;++index)
+    {
+        if(children[index]==child) break;
+    }
+    delete children[index];
+    for(index;index<numberOfKeys;++index)
+    {
+        children[index]==children[index+1];
+    }
+}
+/********************************************************/
+template<typename T, int O>
+int BStarTree<T,O>::Node::getChildIndex(const Node* child) const
 {
     int  index=-1;
     for (int i = 0; i <=numberOfKeys; ++i) {
