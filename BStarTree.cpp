@@ -1,5 +1,6 @@
 #include "BStarTree.hpp"
 #include <cmath>
+#include "Queue.hpp"
 
 template <typename T, int O>
 BStarTree<T, O>::BStarTree() : root(nullptr), numNodes(0)
@@ -41,7 +42,28 @@ template <typename T, int O> void BStarTree<T, O>::printBackwards() const {
 }
 
 /********************************************************/
-template <typename T, int O> void BStarTree<T, O>::printByLevels() const {}
+template <typename T, int O> void BStarTree<T, O>::printByLevels() const {
+  Queue<Node*> q;
+  q.enqueue(root);
+  while(!q.isEmpty()){
+    int level = q.getSize();
+    for(int i = 0; i<level; ++i){
+      Node* aux = q.getFront();
+      q.dequeue();
+      std::cout<<"(";
+      for(int j = 0; i<aux->numberOfKeys; ++i){
+        std::cout<<aux->keys[j]<<", ";
+      }
+      std::cout<<"\b\b)";
+      if(!aux->isLeaf()){
+        for(int k = 0; i<aux->numberOfKeys+1;++k){
+          q.enqueue(aux->children[k]);
+        }
+      }
+    }
+    std::cout<<std::endl<<std::endl;
+  }
+}
 
 /********************************************************/
 // PRIVATE METHODS
@@ -107,12 +129,6 @@ template <typename T, int O> void BStarTree<T, O>::empty(Node *&subRoot) {
 template <typename T, int O>
 void BStarTree<T, O>::Delete(T v, Node *&subRoot) {}
 
-/********************************************************/
-template<typename T,int O>
-bool BStarTree<T,O>::isFull(const Node*& subRoot) const
-{
-    return subRoot->values.GetSize() == order - 1;
-}
 /********************************************************/
 template<typename T, int O>
 void BStarTree<T,O>::lendToRight(Node *source)
@@ -279,16 +295,16 @@ void BStarTree<T, O>::split(Node *leftNode,Node *rightNode )
     //We save the index of the leftmost node
     int leftIndex=parent->getChildIndex(leftNode);
     //we remove the current nodes from the parent
-    parent.removeChild(leftNode);
-    parent.removeChild(rightNode);
+    parent->removeChild(leftNode);
+    parent->removeChild(rightNode);
     //we add the new nodes to the parent
-    parent.addChild(n3,leftIndex);
-    parent.addChild(n2,leftIndex);
-    parent.addChild(n1,leftIndex);
+    parent->addChild(n3,leftIndex);
+    parent->addChild(n2,leftIndex);
+    parent->addChild(n1,leftIndex);
     //we check if the parent itself became overloaded
-    if(parent.isOverloaded())
+    if(parent->isOverloaded())
     {
-        if(parent.isRoot) splitRoot();
+        if(parent->isRoot) splitRoot();
         else
         {
             Node *leftS = parent->getLeftSibling();
@@ -398,10 +414,8 @@ bool BStarTree<T, O>::search(T &value, const Node *&subRoot) const {
 
 /********************************************************/
 template<typename T, int O>
-BStarTree<T,O>::Node::Node(Node *p) : parent(p), numberOfElements(0) 
+BStarTree<T,O>::Node::Node(Node *p) : parent(p), numberOfKeys(0) 
 {
-    numberOfKeys=0;
-    parent=p;
     if(isRoot())
     {
         //set minimun and maximum KEY capacitites for a root node
