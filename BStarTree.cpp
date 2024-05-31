@@ -126,7 +126,7 @@ void BStarTree<T,O>::lendToRight(Node *source)
     //changes the parent value
     source->parent->values[indexOfParentValue]=source->values[source->numberOfElements-1];
     // removes the transferred value from the source
-    source->values.remove(source->values[source->numberOfElements-1]);
+    source->values.removeValue(source->values[source->numberOfElements-1]);
 }
 /********************************************************/
 template<typename T, int O>
@@ -160,7 +160,7 @@ void BStarTree<T,O>::lendToLeft(Node *source)
     //changes the parent value
     source->parent->values[indexOfParentValue]=source->values[0];
     // removes the transferred value from the source
-    source->values.remove(source->values[0]);
+    source->values.removeValue(source->values[0]);
 }
 template<typename T, int O>
 typename BStarTree<T,O>::Node* BStarTree<T,O>::Node::getRightSibling() {
@@ -276,13 +276,15 @@ void BStarTree<T, O>::split(Node *leftNode,Node *rightNode )
             indexChildren++;
         }
     }
+    //We save the index of the leftmost node
+    int leftIndex=parent->getChildIndex(leftNode);
     //we remove the current nodes from the parent
     parent.removeChild(leftNode);
     parent.removeChild(rightNode);
     //we add the new nodes to the parent
-    parent.addChild(n3,0);
-    parent.addChild(n2,0);
-    parent.addChild(n1,0);
+    parent.addChild(n3,leftIndex);
+    parent.addChild(n2,leftIndex);
+    parent.addChild(n1,leftIndex);
     //we check if the parent itself became overloaded
     if(parent.isOverloaded())
     {
