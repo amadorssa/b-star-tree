@@ -417,7 +417,7 @@ BStarTree<T,O>::Node::Node(Node *p) : parent(p), numberOfElements(0)
     T auxVals[maxCapacity + 1];       // one more in case it overloads
     Node *auxChldrn[maxCapacity + 2]; // one more in case it overloads
 
-    values = auxVals;
+    keys = auxVals;
     children = auxChldrn;
 }
 /********************************************************/
@@ -443,27 +443,27 @@ bool BStarTree<T,O>::Node::isFull() const
 
 /********************************************************/
 template<typename T, int O>
-int BStarTree<T,O>::Node::getValueIndex(const T& v) const
+int BStarTree<T,O>::Node::getKeyIndex(const T& v) const
 {
     for(int i=0;i<numberOfKeys;++i)
     {
-        if(values[i]==v) return i;
+        if(keys[i]==v) return i;
     }
 }
 /********************************************************/
 template<typename T, int O>
-void BStarTree<T,O>::Node::addValue(const T& v)
+void BStarTree<T,O>::Node::addKey(const T& v)
 {                            
     int index = 0;
     for(index; index < numberOfKeys; ++index){
-        if(values[index] == v) return;
-        if(values[index] < v) break;
+        if(keys[index] == v) return;
+        if(keys[index] < v) break;
     }
 
     for(int i = index; i < numberOfKeys; ++i)
-        values[i + 1] = values[i];
+        keys[i + 1] = keys[i];
 
-    values[index] = v;
+    keys[index] = v;
     ++numberOfKeys;
 
 }
@@ -480,12 +480,12 @@ void BStarTree<T,O>::Node::addChild(Node *child,int pos)
 }
 /********************************************************/
 template<typename T, int O>
-void BStarTree<T,O>::Node::removeValue(const T& v)
+void BStarTree<T,O>::Node::removeKey(const T& v)
 {
-    int index=getValueIndex(v);
+    int index=getKeyIndex(v);
     for(int i=index;i<numberOfKeys-1;++i)
     {
-        values[i]=values[i+1];
+        keys[i]=keys[i+1];
     }
     --numberOfKeys;
 } 
