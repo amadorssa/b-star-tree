@@ -34,9 +34,11 @@ class BStarTree
         bool isLeaf() const;
         bool isRoot() const;
         int getValueIndex(const T& v) const;
-        int getChildIndex(const Node*& child) const;
-        void remove(const T& v);
+        int getChildIndex(const Node* child) const;
+        void removeValue(const T& v);
+        void removeChild(const Node *child);
         void addValue(const T& v);
+        void addChild(Node *child, int pos);
         void empty();
         bool isFull() const;
         bool isOverloaded() const;
@@ -57,8 +59,7 @@ class BStarTree
         void lendToRight(Node *source); 
         bool isFull(const Node*& subRoot) const;
         bool isOverloaded(const Node *subRoot) const;
-        void splitLeft(Node *overloaded);
-        void splitRight(Node *overloaded);
+        void split(Node *leftNode, Node *rightNode);
         void splitRoot();
         bool search(T &value,const Node*&subRoot) const;
 
