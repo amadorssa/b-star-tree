@@ -32,7 +32,19 @@ template <typename T, int O> void BStarTree<T, O>::empty() { empty(root); }
 template <typename T, int O> void BStarTree<T, O>::Delete(T v) {
     Node *subRoot = getDirNode(v, root);
     if(subRoot == nullptr) return;
-    Delete(v, subRoot);
+    if(!subRoot->isLeaf())
+    {
+        int index=subRoot->getKeyIndex();
+        Node *newSubRoot=subRoot->biggestNode(subRoot->children[index]);
+        subRoot->keys[index]=newSubRoot->keys[newSubRoot->numberOfKeys-1];
+        newSubRoot->removeKey(newSubRoot->keys[newSubRoot->numberOfKeys-1]);
+        handleDeletion(newSubRoot);
+    }
+    else
+    {
+        subRoot->removeKey(v);
+        handleDeletion(v, subRoot);
+    } 
 }
 /********************************************************/
 template <typename T, int O> void BStarTree<T, O>::print() const {
@@ -129,16 +141,12 @@ template <typename T, int O> void BStarTree<T, O>::empty(Node *&subRoot) {
 /********************************************************/
 
 template <typename T, int O>
-void BStarTree<T, O>::Delete(T &v, Node *&subRoot) {
-
-    int index = subRoot->getKeyIndex(v);
-    subRoot->removeKey(v);
-    
+void BStarTree<T, O>::handleDeletion(Node *&subRoot) {
+ 
     // The easiest case.
-    if(subRoot->numberOfKeys >= subRoot->minCapacity && subRoot->isLeaf()) return;
-    
-    // The node is a leaf but if we delete the node's capavity will be under the minimum.
-    if(subRoot->numberOfKeys < subRoot->minCapacity && subRoot->isLeaf()){
+    if(subRoot->numberOfKeys >= subRoot->minCapacity) return;
+    else
+    {
         // Subcase when we can take a key from a sibling.
         Node *leftSibling = subRoot->getLeftSibling();
         Node *rightSibling = subRoot->getRightSibling();
@@ -154,17 +162,9 @@ void BStarTree<T, O>::Delete(T &v, Node *&subRoot) {
             // Subcase when we cant take a key from a sibling
             merge(subRoot);
             if(subRoot->parent->numberOfKeys < subRoot->parent->minCapacity)
-                Delete(v, subRoot->parent);
+                handleDeletion(subRoot->parent);
             return;
         }        
-    }
-
-    // The node is not a leaf.
-    if(!subRoot->isLeaf()){
-        subRoot->addKey(subRoot->children[index]->biggerOfKeys());
-        if(subRoot->children[index]->numberOfKeys < subRoot->numberOfKeys)
-            Delete(v, subRoot->children[index]);
-        return;
     }
 }
 
@@ -445,24 +445,26 @@ void BStarTree<T, O>::splitRoot()
 template <typename T, int O>
 bool BStarTree<T, O>::search(T &value, const Node *&subRoot) const {
     int i = 0;
-    for (i; i < subRoot->numberOfElements; ++i) {
+    for (i; i < subRoot->numberOfKeys; ++i) {
         if (value == subRoot->values[i])
             return true;
         if (value < subRoot->values[i])
             return search(value, subRoot->children[i]);
     }
+    if(value>subRoot->values[subRoot->numberOfKeys-1] && !subRoot->isLeaf()) return search(value,subRoot->children[subRoot->numberOfKeys]);
     return false;
 }
 
 template <typename T, int O>
-typename BStarTree<T, O>::Node*& BStarTree<T, O>::getDirNode(T value, const Node *&subRoot) const{
+typename BStarTree<T, O>::Node*& BStarTree<T, O>::getNodeAdress(T value, const Node *&subRoot) const{
     int i;
     for (i = 0; i < subRoot->numberOfElements; ++i) {
         if (value == subRoot->values[i])
             return subRoot->children[i];
         if (value < subRoot->values[i])
-            return search(value, subRoot->children[i]);
+            return getNodeAdress(value, subRoot->children[i]);
     }
+    if(value>subRoot->values[subRoot->numberOfKeys-1] && !subRoot->isLeaf()) return getNodeAdress(value,subRoot->children[subRoot->numberOfKeys]);
     return nullptr;
 }
 
@@ -593,9 +595,7 @@ int BStarTree<T,O>::Node::getChildIndex(const Node* child) const
 
 /********************************************************/
 template <typename T, int O>
-T& BStarTree<T, O>::Node::biggerOfKeys() const{
-    T bigger = keys[0];
-    for(int i = 1; i < numberOfKeys; ++i)
-        if(keys[i] > bigger) bigger = keys[i];
+T& BStarTree<T, O>::Node::biggestNode(Node *& subRoot) const{
+    if()
 }
 

@@ -44,7 +44,7 @@ private://attributes
           bool isOverloaded() const;
           Node* getLeftSibling();
           Node* getRightSibling();
-          T& biggerOfKeys() const;
+          T& biggestNode(Node *& subroot) const;
       };
     Node *root;
     int numNodes;
@@ -55,7 +55,7 @@ private://methods
     void print(Node* subRoot) const;
     void printBackwards(Node* subRoot) const;
     void empty(Node*& subRoot);
-    void Delete(T &v, Node*& subRoot);
+    void handleDeletion(Node*& subRoot);
     void lendToLeft(Node *source);
     void lendToRight(Node *source); 
     bool isFull(const Node*& subRoot) const;
@@ -63,7 +63,7 @@ private://methods
     void split(Node *leftNode, Node *rightNode);
     void splitRoot();
     bool search(T &value,const Node*&subRoot) const;
-    Node*& getDirNode(T v,  const Node *&subRoot) const;
+    Node*& getNodeAdress(T v,  const Node *&subRoot) const;
 };
 
 #endif // B_STAR_TREE_HPP
