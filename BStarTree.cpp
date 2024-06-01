@@ -150,19 +150,18 @@ void BStarTree<T, O>::handleDeletion(Node *&subRoot) {
         // Subcase when we can take a key from a sibling.
         Node *leftSibling = subRoot->getLeftSibling();
         Node *rightSibling = subRoot->getRightSibling();
-
-        if(leftSibling != nullptr && leftSibling->numberOfKeys > leftSibling->minCapacity){
+        int subRootIndex=subRoot->parent->getChildIndex(subRoot);//We get what the position of the subRoot is in it's level
+        if(subRootIndex==subRoot->parent->numberOfKeys || leftSibling->numberOfKeys > leftSibling->minCapacity){
             lendToLeft(leftSibling);
-            return;
+            handleDeletion(leftSibling);
             
-        }else if(rightSibling != nullptr && rightSibling->numberOfKeys > rightSibling->minCapacity){
+        }else if(subRootIndex==0 || rightSibling->numberOfKeys > rightSibling->minCapacity){
             lendToRight(rightSibling);
-            return;
+            handleDeletion(rightSibling);
         }else{
             // Subcase when we cant take a key from a sibling
             merge(subRoot);
-            if(subRoot->parent->numberOfKeys < subRoot->parent->minCapacity)
-                handleDeletion(subRoot->parent);
+            handleDeletion(subRoot->parent);
             return;
         }        
     }
@@ -596,6 +595,10 @@ int BStarTree<T,O>::Node::getChildIndex(const Node* child) const
 /********************************************************/
 template <typename T, int O>
 T& BStarTree<T, O>::Node::biggestNode(Node *& subRoot) const{
-    if()
+    if(subRoot->isLeaf())
+    {
+        return subRoot->keys[subRoot->numberOfKeys-1];
+    }
+    return biggestNode(subRoot->children[subRoot->numberOfKeys]);
 }
 
