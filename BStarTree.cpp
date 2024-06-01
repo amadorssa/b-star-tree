@@ -150,25 +150,14 @@ void BStarTree<T, O>::handleDeletion(Node *&subRoot) {
         // Subcase when we can take a key from a sibling.
         Node *leftSibling = subRoot->getLeftSibling();
         Node *rightSibling = subRoot->getRightSibling();
-        //case where the node under the minimum is in the borders of the subtree
-        int subRootIndex=subRoot->parent->getChildIndex(subRoot);
-        if(subRootIndex==0)
-        {
-            lendToLeft(rightSibling);
-            handleDeletion();
-        }
-        else if (subRootIndex==subRoot->parent->numberOfKeys)
-        {
-            lendToRight(leftSibling);
-            handleDeletion();
-        }
-        else if(leftSibling != nullptr && leftSibling->numberOfKeys > leftSibling->minCapacity){
+        int subRootIndex=subRoot->parent->getChildIndex(subRoot);//We get what the position of the subRoot is in it's level
+        if(subRootIndex==subRoot->parent->numberOfKeys || leftSibling->numberOfKeys > leftSibling->minCapacity){
             lendToLeft(leftSibling);
-            return;
+            handleDeletion(leftSibling);
             
-        }else if(rightSibling != nullptr && rightSibling->numberOfKeys > rightSibling->minCapacity){
+        }else if(subRootIndex==0 || rightSibling->numberOfKeys > rightSibling->minCapacity){
             lendToRight(rightSibling);
-            return;
+            handleDeletion(rightSibling);
         }else{
             // Subcase when we cant take a key from a sibling
             merge(subRoot);
