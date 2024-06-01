@@ -30,7 +30,9 @@ template <typename T, int O> bool BStarTree<T, O>::isEmpty() const {
 template <typename T, int O> void BStarTree<T, O>::empty() { empty(root); }
 /********************************************************/
 template <typename T, int O> void BStarTree<T, O>::Delete(T v) {
-    Delete(v, root);
+    Node *subRoot = getDirNode(v, root);
+    if(subRoot == nullptr) return;
+    Delete(v, subRoot);
 }
 /********************************************************/
 template <typename T, int O> void BStarTree<T, O>::print() const {
@@ -83,7 +85,7 @@ void BStarTree<T, O>::add(const T &v, Node *&subRoot) {
                 break;
             }
         }
-    } else {
+   } else {
         if (!subRoot->isFull())
             subRoot->addValue(v); // If the node isnt full , just add.
         else {
@@ -127,7 +129,51 @@ template <typename T, int O> void BStarTree<T, O>::empty(Node *&subRoot) {
 /********************************************************/
 
 template <typename T, int O>
-void BStarTree<T, O>::Delete(T v, Node *&subRoot) {}
+void BStarTree<T, O>::Delete(T &v, Node *&subRoot) {
+
+    int index = subRoot->getKeyIndex(v);
+    subRoot->removeKey(v);
+    
+    // The easiest case.
+    if(subRoot->numberOfKeys >= subRoot->minCapacity && subRoot->isLeaf()) return;
+    
+    // The node is a leaf but if we delete the node's capavity will be under the minimum.
+    if(subRoot->numberOfKeys < subRoot->minCapacity && subRoot->isLeaf()){
+        // Subcase when we can take a key from a sibling.
+        Node *leftSibling = subRoot->getLeftSibling();
+        Node *rightSibling = subRoot->getRightSibling();
+
+        if(leftSibling != nullptr && leftSibling->numberOfKeys > leftSibling->minCapacity){
+            lendToLeft(leftSibling);
+            return;
+            
+        }else if(rightSibling != nullptr && rightSibling->numberOfKeys > rightSibling->minCapacity){
+            lendToRight(rightSibling);
+            return;
+        }else{
+            // Subcase when we cant take a key from a sibling
+            merge(subRoot);
+            if(subRoot->parent->numberOfKeys < subRoot->parent->minCapacity)
+                Delete(v, subRoot->parent);
+            return;
+        }        
+    }
+
+    // The node is not a leaf.
+    if(!subRoot->isLeaf()){
+        subRoot->addKey(subRoot->children[index]->biggerOfKeys());
+        if(subRoot->children[index]->numberOfKeys < subRoot->numberOfKeys)
+            Delete(v, subRoot->children[index]);
+        return;
+    }
+}
+
+/********************************************************/
+template<typename T,int O>
+bool BStarTree<T,O>::isFull(const Node*& subRoot) const
+{
+    return subRoot->values.GetSize() == O - 1;
+}
 
 /********************************************************/
 template<typename T, int O>
@@ -408,6 +454,18 @@ bool BStarTree<T, O>::search(T &value, const Node *&subRoot) const {
     return false;
 }
 
+template <typename T, int O>
+typename BStarTree<T, O>::Node*& BStarTree<T, O>::getDirNode(T value, const Node *&subRoot) const{
+    int i;
+    for (i = 0; i < subRoot->numberOfElements; ++i) {
+        if (value == subRoot->values[i])
+            return subRoot->children[i];
+        if (value < subRoot->values[i])
+            return search(value, subRoot->children[i]);
+    }
+    return nullptr;
+}
+
 /********************************************************/
 // NODE METHODS
 /********************************************************/
@@ -531,3 +589,13 @@ int BStarTree<T,O>::Node::getChildIndex(const Node* child) const
     }
     return index;
 }
+
+
+/********************************************************/
+template <typename T, int O>
+T& BStarTree<T, O>::Node::biggerOfKeys() const{
+    T bigger = keys[0];
+    for(int i = 1; i < numberOfKeys; ++i)
+        if(keys[i] > bigger) bigger = keys[i];
+}
+

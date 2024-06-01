@@ -5,64 +5,65 @@ template<typename T, int O=4>
 class BStarTree
 {
 
-    public:
+public:
 
-        BStarTree();
-        ~BStarTree();
-        BStarTree(const BStarTree& t);
-        BStarTree& operator=(const BStarTree& t);
-        void add(T v);
-        void Delete(T v);
-        bool isEmpty() const;
-        void empty();
-        void print() const;
-        void printBackwards() const;
-        void printByLevels() const;
+    BStarTree();
+    ~BStarTree();
+    BStarTree(const BStarTree& t);
+    BStarTree& operator=(const BStarTree& t);
+    void add(T v);
+    void Delete(T v);
+    bool isEmpty() const;
+    void empty();
+    void print() const;
+    void printBackwards() const;
+    void printByLevels() const;
         
 
-    private://attributes
+private://attributes
   
-      struct Node
+    struct Node
       {   
-        Node(Node *p);
-        int numberOfKeys;
-        int maxCapacity;
-        int minCapacity;   
-        T *keys;
-        Node* *children;
-        Node* parent;
-        bool isLeaf() const;
-        bool isRoot() const;
-        int getKeyIndex(const T& v) const;
-        int getChildIndex(const Node* child) const;
-        void removeKey(const T& v);
-        void removeChild(const Node *child);
-        void addKey(const T& v);
-        void addChild(Node *child, int pos);
-        void empty();
-        bool isFull() const;
-        bool isOverloaded() const;
-        Node* getLeftSibling();
-        Node* getRightSibling();
+          Node(Node *p);
+          int numberOfKeys;
+          int maxCapacity;
+          int minCapacity;   
+          T *keys;
+          Node* *children;
+          Node* parent;
+          bool isLeaf() const;
+          bool isRoot() const;
+          int getKeyIndex(const T& v) const;
+          int getChildIndex(const Node* child) const;
+          void removeKey(const T& v);
+          void removeChild(const Node *child);
+          void addKey(const T& v);
+          void addChild(Node *child, int pos);
+          void empty();
+          bool isFull() const;
+          bool isOverloaded() const;
+          Node* getLeftSibling();
+          Node* getRightSibling();
+          T& biggerOfKeys() const;
       };
-      Node *root;
-      int numNodes;
+    Node *root;
+    int numNodes;
 
-    private://methods
+private://methods
 
-        void add(const T& v, Node*& subRoot);
-        void print(Node* subRoot) const;
-        void printBackwards(Node* subRoot) const;
-        void empty(Node*& subRoot);
-        void Delete(T v, Node*& subRoot);
-        void lendToLeft(Node *source);
-        void lendToRight(Node *source); 
-        bool isFull(const Node*& subRoot) const;
-        bool isOverloaded(const Node *subRoot) const;
-        void split(Node *leftNode, Node *rightNode);
-        void splitRoot();
-        bool search(T &value,const Node*&subRoot) const;
-
+    void add(const T& v, Node*& subRoot);
+    void print(Node* subRoot) const;
+    void printBackwards(Node* subRoot) const;
+    void empty(Node*& subRoot);
+    void Delete(T &v, Node*& subRoot);
+    void lendToLeft(Node *source);
+    void lendToRight(Node *source); 
+    bool isFull(const Node*& subRoot) const;
+    bool isOverloaded(const Node *subRoot) const;
+    void split(Node *leftNode, Node *rightNode);
+    void splitRoot();
+    bool search(T &value,const Node*&subRoot) const;
+    Node*& getDirNode(T v,  const Node *&subRoot) const;
 };
 
 #endif // B_STAR_TREE_HPP
