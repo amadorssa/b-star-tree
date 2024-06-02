@@ -64,6 +64,7 @@ private://methods
     void splitRoot();
     bool search(T &value,const Node*&subRoot) const;
     Node*& getNodeAdress(T v,  const Node *&subRoot) const;
+    void copyNode(Node *&copy, const Node *source);
 };
 
 #endif // B_STAR_TREE_HPP
