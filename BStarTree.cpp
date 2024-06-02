@@ -468,6 +468,110 @@ typename BStarTree<T, O>::Node*& BStarTree<T, O>::getNodeAdress(T value, const N
 }
 
 /********************************************************/
+template <typename T, int O>
+void BStarTree<T,O>::merge(Node *& n){
+  Node * left = n->getLeftSibling(), *right = n->getRightSibling(), *parent = n->parent;
+  int index = parent->getChildIndex(n);
+  int leftkey = parent->keys[index-1], rightkey = parent->keys[index];
+  T aux_keys[3*n->minCapacity+1];
+  int size = left->numberOfKeys + n->numberOfKeys + right->numberOfKeys;
+  //Aqui empezamos a llenar aux_keys con las llaves correspondientes
+  /*
+  for(int i = 0;i<left->numberOfKeys;++i){
+    aux_keys[i] = left->keys[i];
+    size++;
+  }
+  aux_keys[++size] = parent->keys[leftkey];
+  for(int i = 0; i<n->numberOfKeys;++i){
+    aux_keys[i+size] = n->keys[i];
+    size++;
+  }
+  aux_keys[++size] = parent->keys[rightkey];
+
+  for(int i = 0; i<right->numberOfKeys;++i){
+    aux_keys[i+size] = right->keys[i];
+    ++size;
+  }*/
+  // SPECIAL CASE
+  if(parent->numberOfKeys == 1){
+    Node* aux = right == nullptr? left : right; 
+    Node* newRoot;
+    // Add keys to the new root
+    for(int i= 0; i<n->numberOfKeys + aux->numberOfKeys + parent->numberOfKeys; ++i){
+        newRoot->addKey(aux->keys[i]);
+        newRoot->addKey(n->keys[i]);
+        newRoot->addKey(parent->keys[i]); 
+    }
+
+    int delimiter = 0;
+    if(left == nullptr){
+      for(int delimiter = 0; delimiter<n->numberOfKeys+1;++delimiter) {
+        newRoot->addChild(n->children[delimiter], delimiter);
+        n->children[delimiter]->parent = newRoot;  
+      } 
+      for(int i = 0; i<aux->numberOfKeys+1;++i) {
+        newRoot->addChild(aux->children[i], delimiter+i);
+        aux->children[i]->parent = newRoot;
+      } 
+    }
+    else if(right == nullptr){
+      for(int delimiter = 0; delimiter<aux->numberOfKeys+1;++delimiter) {
+        newRoot->addChild(aux->children[delimiter], delimiter);
+        aux->children[delimiter]->parent = newRoot;
+      } 
+      for(int i = 0; i<n->numberOfKeys+1;++i) {
+        newRoot->addChild(n->children[i], delimiter+i);
+        n->children[i]->parent = newRoot;
+      } 
+    }
+    delete n;
+    delete aux;
+    delete root;
+    root = newRoot;
+  }
+  for(int i = 0; i<size; ++i){
+    if(i<left->numberOfKeys) aux_keys[i] = left->keys[i];
+    else if(i == left->numberOfKeys) aux_keys[i] = parent->keys[leftkey];
+    else if(i<left->numberOfKeys + n->numberOfKeys) aux_keys[i] = n->keys[i];
+    else if(i == left->numberOfKeys + n->numberOfKeys) aux_keys[i] = parent->keys[rightkey];
+    else if(i<size) aux_keys[i] = right->keys[i];
+  } 
+  Node* aux_left, *aux_right;
+// Lleno los nuevos nodos con las llaves correspondientes
+  for(int i = 0; i<size; ++i){
+    if(i<n->maxCapacity) aux_left->addKey(aux_keys[i]);
+    else if (i == n->maxCapacity) parent->addKey(aux_keys[i]);
+    else if(i>n->maxCapacity) aux_right->addKey(aux_keys[i]); 
+  }
+  //Empezamos a conectar los hijos de los nodos con los nuevos nodos
+  Node* aux_children[(3*n->minCapacity)+1]; 
+  
+  int child_size = (left->numberOfKeys+1) + (n->numberOfKeys+1) + (right->numberOfKeys+1);
+  for(int i = 0; i<child_size;++i)
+    if(i < left->numberOfKeys+1) aux_children[i] = left->children[i];
+    else if (i<left->numberOfKeys+1 + n->numberOfKeys+1) aux_children[i] = n->children[i];
+    else if (i<child_size) aux_children[i] = right->children[i];
+  //Conectamos los nodos con sus nuevos hijos
+  for(int i = 0; i<child_size;++i){
+    if(i<child_size/2){
+      aux_left->children[i] = aux_children[i];
+      aux_children[i]->parent = aux_left;  //Conectamos los hijos con los padres
+    } 
+    else {
+      aux_right->children[i] = aux_children[i];
+      aux_children[i]->parent = aux_right;  
+    } 
+  }
+  parent->removeChild(right);
+  parent->removeChild(n);
+  parent->removeChild(left);
+  parent->addChild(aux_left, index-1);
+  parent->addChild(aux_right, index);
+  delete left;
+  delete n;
+  delete right;
+}
+/********************************************************/
 // NODE METHODS
 /********************************************************/
 
