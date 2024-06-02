@@ -30,11 +30,11 @@ template <typename T, int O> bool BStarTree<T, O>::isEmpty() const {
 template <typename T, int O> void BStarTree<T, O>::empty() { empty(root); }
 /********************************************************/
 template <typename T, int O> void BStarTree<T, O>::Delete(T v) {
-    Node *subRoot = getDirNode(v, root);
+    Node *subRoot = getNodeAdress(v, root);
     if(subRoot == nullptr) return;
     if(!subRoot->isLeaf())
     {
-        int index=subRoot->getKeyIndex();
+        int index=subRoot->getKeyIndex(v);
         Node *newSubRoot=subRoot->biggestNode(subRoot->children[index]);
         subRoot->keys[index]=newSubRoot->keys[newSubRoot->numberOfKeys-1];
         newSubRoot->removeKey(newSubRoot->keys[newSubRoot->numberOfKeys-1]);
@@ -43,7 +43,7 @@ template <typename T, int O> void BStarTree<T, O>::Delete(T v) {
     else
     {
         subRoot->removeKey(v);
-        handleDeletion(v, subRoot);
+        handleDeletion(subRoot);
     } 
 }
 /********************************************************/
@@ -89,7 +89,7 @@ void BStarTree<T, O>::add(const T &v, Node *&subRoot) {
     if (!subRoot->isLeaf()) {
         int size = subRoot->numberOfKeys, aux;
         for (int i = 0; i < size; ++i) {
-            aux = subRoot->values[i];
+            aux = subRoot->keys[i];
             if (aux == v)
                 return; // The value already exists.
             if (aux < v) {
@@ -99,7 +99,7 @@ void BStarTree<T, O>::add(const T &v, Node *&subRoot) {
         }
    } else {
         if (!subRoot->isFull())
-            subRoot->addValue(v); // If the node isnt full , just add.
+            subRoot->addKey(v); // If the node isnt full , just add.
         else {
             Node *leftS = subRoot->getLeftSibling();
             if (leftS != nullptr && !leftS->isFull()) {
@@ -129,7 +129,7 @@ void BStarTree<T, O>::printBackwards(Node *subRoot) const {}
 /********************************************************/
 template <typename T, int O> void BStarTree<T, O>::empty(Node *&subRoot) {
     if (subRoot != nullptr) {
-        int nm = subRoot->numberOfElements + 1;
+        int nm = subRoot->numberOfKeys + 1;
         for (int i = 0; i < nm; ++i)
             empty(subRoot->children[i]);
         delete subRoot;
@@ -166,28 +166,20 @@ void BStarTree<T, O>::handleDeletion(Node *&subRoot) {
         }        
     }
 }
-
-/********************************************************/
-template<typename T,int O>
-bool BStarTree<T,O>::isFull(const Node*& subRoot) const
-{
-    return subRoot->values.GetSize() == O - 1;
-}
-
 /********************************************************/
 template<typename T, int O>
 void BStarTree<T,O>::lendToRight(Node *source)
 {
     // We store a reference to the parent's value that's to be used
-    T valueInParent =source->parent->values[source->parent->getChildIndex(source) + 1];
+    T valueInParent =source->parent->keys[source->parent->getChildIndex(source) + 1];
     //we store the index of the value
-    int indexOfParentValue=source->parent->getValueIndex(valueInParent);
+    int indexOfParentValue=source->parent->getKeyIndex(valueInParent);
     //puts the parent's value into the right sibling
-    source->getRightSibling()->addValue(valueInParent);
+    source->getRightSibling()->addKey(valueInParent);
     //changes the parent value
-    source->parent->values[indexOfParentValue]=source->values[source->numberOfElements-1];
+    source->parent->keys[indexOfParentValue]=source->keys[source->numberOfKeys-1];
     // removes the transferred value from the source
-    source->values.removeValue(source->values[source->numberOfElements-1]);
+    source->removeKey(source->keys[source->numberOfKeys-1]);
 }
 /********************************************************/
 template<typename T, int O>
@@ -213,15 +205,15 @@ template<typename T, int O>
 void BStarTree<T,O>::lendToLeft(Node *source)
 {
     // We store a reference to the parent's value that's to be used
-    T valueInParent =source->parent->values[source->parent->getChildIndex(source) + 1];
+    T valueInParent =source->parent->keys[source->parent->getChildIndex(source) + 1];
     //we store the index of the value
-    int indexOfParentValue=source->parent->getValueIndex(valueInParent);
+    int indexOfParentValue=source->parent->getKeyIndex(valueInParent);
     //puts the parent's value into the left sibling
-    source->getLeftSibling()->addValue(valueInParent);
+    source->getLeftSibling()->addKey(valueInParent);
     //changes the parent value
-    source->parent->values[indexOfParentValue]=source->values[0];
+    source->parent->keys[indexOfParentValue]=source->keys[0];
     // removes the transferred value from the source
-    source->values.removeValue(source->values[0]);
+    source->removeKey(source->keys[0]);
 }
 template<typename T, int O>
 typename BStarTree<T,O>::Node* BStarTree<T,O>::Node::getRightSibling() {
@@ -260,16 +252,16 @@ void BStarTree<T, O>::split(Node *leftNode,Node *rightNode )
     //add the elements from the left node
     for(int i=0; i<leftNode->numberOfKeys;++i)
     {
-        valuesToGive[i]=leftNode->values[i];
+        valuesToGive[i]=leftNode->keys[i];
         indexValues++;
     }
     //add the element from the parent
-    valuesToGive[indexValues]=parent->values[parent->getChildIndex(leftNode)];
+    valuesToGive[indexValues]=parent->keys[parent->getChildIndex(leftNode)];
     indexValues++;
     //add the elements from the right node
     for(int i=0; i<rightNode->numberOfKeys;++i)
     {
-        valuesToGive[indexValues]=rightNode->values[i];
+        valuesToGive[indexValues]=rightNode->keys[i];
         indexValues++;
     }
 
@@ -278,23 +270,23 @@ void BStarTree<T, O>::split(Node *leftNode,Node *rightNode )
     //we fill the first node
     for(indexValues;indexValues<leftNode->minCapacity;++indexValues)
     {
-        n1->addValue(valuesToGive[indexValues]);
+        n1->addKey(valuesToGive[indexValues]);
     }
     //We give one value to the parent
-    parent->addValue(valuesToGive[indexValues]);
+    parent->addKey(valuesToGive[indexValues]);
     indexValues++;
     //we fill the second node
     for(indexValues;indexValues<leftNode->minCapacity;++indexValues)
     {
-        n2->addValue(valuesToGive[indexValues]);
+        n2->addKey(valuesToGive[indexValues]);
     }
     //we give one value to the parent
-    parent->addValue(valuesToGive[indexValues]);
+    parent->addKey(valuesToGive[indexValues]);
     indexValues++;
     //we fill the last node
     for(indexValues;indexValues<2*O;++indexValues)
     {
-        n3->addValue(valuesToGive[indexValues]);
+        n3->addKey(valuesToGive[indexValues]);
     }
 
     //we check if one of the nodes has children, so we know if we're splitting roots or branches
@@ -352,7 +344,7 @@ void BStarTree<T, O>::split(Node *leftNode,Node *rightNode )
     //we check if the parent itself became overloaded
     if(parent->isOverloaded())
     {
-        if(parent->isRoot) splitRoot();
+        if(parent->isRoot()) splitRoot();
         else
         {
             Node *leftS = parent->getLeftSibling();
@@ -389,25 +381,25 @@ void BStarTree<T, O>::splitRoot()
     //We add the values to the new nodes, as well as the new root
     for(int i=0;i<minKeys;++i)
     {
-        n1->addValue(root->values[indexRoot]);
+        n1->addKey(root->keys[indexRoot]);
         indexRoot++;
     }
     //We add a value to the new root
-    newRoot->addValue(root->values[indexRoot]);
+    newRoot->addKey(root->keys[indexRoot]);
     indexRoot++;
     //second node
     for(int i=0;i<minKeys;++i)
     {
-        n2->addValue(root->values[indexRoot]);
+        n2->addKey(root->keys[indexRoot]);
         indexRoot++;
     }
     //We add a value to the new root
-    newRoot->addValue(root->values[indexRoot]);
+    newRoot->addKey(root->keys[indexRoot]);
     indexRoot++;
     //third node
     for(indexRoot;indexRoot<root->maxCapacity;++indexRoot)
     {
-        n3->addValue(root->values[indexRoot]);
+        n3->addKey(root->keys[indexRoot]);
         indexRoot++;
     }
     //we reset indexRoot
@@ -418,21 +410,21 @@ void BStarTree<T, O>::splitRoot()
         //we add corresponding children to first node
         for(int i=0;i<n1->numberOfKeys+1;++i)
         {
-            n1->addChild(root->children[indexRoot]);
+            n1->addChild(root->children[indexRoot],i);
             root->children[indexRoot]->parent=n1;
             indexRoot++;
         }
         //we add the corresponding children to the second node
         for(int i=0;i<n2->numberOfKeys+1;++i)
         {
-            n2->addChild(root->children[indexRoot]);
+            n2->addChild(root->children[indexRoot],i);
             root->children[indexRoot]->parent=n2;
             indexRoot++;
         }
         //we add the corresponding children to the third root
         for(int i=0;i<n3->numberOfKeys+1;++i)
         {
-            n3->addChild(root->children[indexRoot]);
+            n3->addChild(root->children[indexRoot],i);
             root->children[indexRoot]->parent=n3;
             indexRoot++;
         }
@@ -449,28 +441,28 @@ void BStarTree<T, O>::splitRoot()
 
 /********************************************************/
 template <typename T, int O>
-bool BStarTree<T, O>::search(T &value, const Node *&subRoot) const {
+bool BStarTree<T, O>::search(T &value, const Node *subRoot) const {
     int i = 0;
     for (i; i < subRoot->numberOfKeys; ++i) {
-        if (value == subRoot->values[i])
+        if (value == subRoot->keys[i])
             return true;
-        if (value < subRoot->values[i])
+        if (value < subRoot->keys[i])
             return search(value, subRoot->children[i]);
     }
-    if(value>subRoot->values[subRoot->numberOfKeys-1] && !subRoot->isLeaf()) return search(value,subRoot->children[subRoot->numberOfKeys]);
+    if(value>subRoot->keys[subRoot->numberOfKeys-1] && !subRoot->isLeaf()) return search(value,subRoot->children[subRoot->numberOfKeys]);
     return false;
 }
 
 template <typename T, int O>
-typename BStarTree<T, O>::Node*& BStarTree<T, O>::getNodeAdress(T value, const Node *&subRoot) const{
+typename BStarTree<T, O>::Node* BStarTree<T, O>::getNodeAdress(T& value, Node *&subRoot) const{
     int i;
-    for (i = 0; i < subRoot->numberOfElements; ++i) {
-        if (value == subRoot->values[i])
+    for (i = 0; i < subRoot->numberOfKeys; ++i) {
+        if (value == subRoot->keys[i])
             return subRoot->children[i];
-        if (value < subRoot->values[i])
+        if (value < subRoot->keys[i])
             return getNodeAdress(value, subRoot->children[i]);
     }
-    if(value>subRoot->values[subRoot->numberOfKeys-1] && !subRoot->isLeaf()) return getNodeAdress(value,subRoot->children[subRoot->numberOfKeys]);
+    if(value>subRoot->keys[subRoot->numberOfKeys-1] && !subRoot->isLeaf()) return getNodeAdress(value,subRoot->children[subRoot->numberOfKeys]);
     return nullptr;
 }
 
@@ -634,6 +626,7 @@ int BStarTree<T,O>::Node::getKeyIndex(const T& v) const
     {
         if(keys[i]==v) return i;
     }
+    return -1;
 }
 /********************************************************/
 template<typename T, int O>
@@ -706,10 +699,10 @@ int BStarTree<T,O>::Node::getChildIndex(const Node* child) const
 
 /********************************************************/
 template <typename T, int O>
-T& BStarTree<T, O>::Node::biggestNode(Node *& subRoot) const{
+typename BStarTree<T,O>::Node*& BStarTree<T, O>::Node::biggestNode(Node *&subRoot) const{
     if(subRoot->isLeaf())
     {
-        return subRoot->keys[subRoot->numberOfKeys-1];
+        return subRoot;
     }
     return biggestNode(subRoot->children[subRoot->numberOfKeys]);
 }
