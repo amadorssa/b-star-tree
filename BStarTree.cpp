@@ -322,18 +322,21 @@ void BStarTree<T, O>::split(Node *leftNode,Node *rightNode )
         for(int i=0;i<n1->numberOfKeys+1;++i)
         {
             n1->addChild(childrenToGive[indexChildren],i);
+            childrenToGive[indexChildren]->parent=n1;
             indexChildren++;
         }
         //we add the corresponding children to the second node
         for(int i=0;i<n2->numberOfKeys+1;++i)
         {
-            n1->addChild(childrenToGive[indexChildren],i);
+            n2->addChild(childrenToGive[indexChildren],i);
+            childrenToGive[indexChildren]->parent=n2;
             indexChildren++;
         }
         //we add the corresponding children to the third node
         for(int i=0;i<n3->numberOfKeys+1;++i)
         {
-            n1->addChild(childrenToGive[indexChildren],i);
+            n3->addChild(childrenToGive[indexChildren],i);
+            childrenToGive[indexChildren]->parent=n3;
             indexChildren++;
         }
     }
@@ -416,18 +419,22 @@ void BStarTree<T, O>::splitRoot()
         for(int i=0;i<n1->numberOfKeys+1;++i)
         {
             n1->addChild(root->children[indexRoot]);
+            root->children[indexRoot]->parent=n1;
             indexRoot++;
         }
         //we add the corresponding children to the second node
         for(int i=0;i<n2->numberOfKeys+1;++i)
         {
-            n1->addChild(root->children[indexRoot]);
+            n2->addChild(root->children[indexRoot]);
+            root->children[indexRoot]->parent=n2;
             indexRoot++;
         }
         //we add the corresponding children to the third root
         for(int i=0;i<n3->numberOfKeys+1;++i)
         {
             n3->addChild(root->children[indexRoot]);
+            root->children[indexRoot]->parent=n3;
+            indexRoot++;
         }
     }
     //we add the new nodes to the new root
@@ -528,6 +535,7 @@ void BStarTree<T,O>::merge(Node *& n){
     delete aux;
     delete root;
     root = newRoot;
+    return;
   }
   for(int i = 0; i<size; ++i){
     if(i<left->numberOfKeys) aux_keys[i] = left->keys[i];
