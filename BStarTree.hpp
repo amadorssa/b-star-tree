@@ -15,10 +15,7 @@ public:
     void Delete(T v);
     bool isEmpty() const;
     void empty();
-    void print() const;
-    void printBackwards() const;
-    void printByLevels() const;
-        
+    void print() const;    
 
 private://attributes
   

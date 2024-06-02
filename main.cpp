@@ -27,7 +27,7 @@ void deleteNode(BStarTree<T>& t) {
 
 template<typename T>
 void displayTree(const BStarTree<T>& t) {
-    t.printByLevels();
+    t.print();
 }
 
 int main() {
