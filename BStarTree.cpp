@@ -18,7 +18,14 @@ BStarTree<T, O>::BStarTree(const BStarTree<T, O> &t)
 
 /********************************************************/
 template <typename T, int O>
-BStarTree<T, O> &BStarTree<T, O>::operator=(const BStarTree<T, O> &t) {}
+BStarTree<T, O> &BStarTree<T, O>::operator=(const BStarTree<T, O> &t) {
+    if (this == &t) return *this;
+    empty();
+    copyNode(this->root, t.root);
+    return *this;
+}
+
+
 /********************************************************/
 template <typename T, int O> void BStarTree<T, O>::add(T v) { add(v, root); }
 /********************************************************/
@@ -464,6 +471,34 @@ typename BStarTree<T, O>::Node* BStarTree<T, O>::getNodeAdress(T& value, Node *&
     }
     if(value>subRoot->keys[subRoot->numberOfKeys-1] && !subRoot->isLeaf()) return getNodeAdress(value,subRoot->children[subRoot->numberOfKeys]);
     return nullptr;
+}
+
+template <typename T, int O>
+void BStarTree<T, 0>::copyNode(Node *&copy, const Node *source) {
+    // If the source is null, the copy will be null
+    if (source == nullptr) {
+        copy = nullptr;
+        return;
+    }
+
+    copy = new Node(nullptr);
+    
+    // copy the attributes of the source node
+    copy->numberOfKeys = source->numberOfKeys;
+    copy->minCapacity = source->minCapacity;
+    copy->maxCapacity = source->maxCapacity;
+
+    // copy the keys
+    for(int i = 0; i < source->numberOfKeys; ++i){
+        copy->values[i] = source->values[i];
+    }
+    
+    // copy the children
+    for(int i = 0; i <= source->numberOfKeys; ++i){
+        copyNode(copy->children[i], source->children[i]);
+    }
+
+    ++numNodes;
 }
 
 /********************************************************/

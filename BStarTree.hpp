@@ -60,6 +60,7 @@ private://methods
     void lendToRight(Node *source); 
     void split(Node *leftNode, Node *rightNode);
     void splitRoot();
+    void copyNode(Node *&copy, const Node *source);
     bool search(T &value,const Node*subRoot) const;
     Node* getNodeAdress(T& v, Node *&subRoot) const;
     void merge(Node *& n);
