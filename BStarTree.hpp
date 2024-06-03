@@ -15,7 +15,8 @@ public:
     void Delete(T v);
     bool isEmpty() const;
     void empty();
-    void print() const;    
+    void print() const;
+    bool search(T v) const;
 
 private://attributes
   
@@ -44,6 +45,7 @@ private://attributes
           Node* getLeftSibling();
           Node* getRightSibling();
           Node*& biggestNode(Node *&subroot) const;
+          
       };
     Node *root;
     int numNodes;

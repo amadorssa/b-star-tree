@@ -37,7 +37,10 @@ template <typename T, int O> bool BStarTree<T, O>::isEmpty() const {
 }
 
 /********************************************************/
-template <typename T, int O> void BStarTree<T, O>::empty() { empty(root); }
+template <typename T, int O> void BStarTree<T, O>::empty() {
+    empty(root);
+    root = new Node(nullptr);
+}
 /********************************************************/
 template <typename T, int O> void BStarTree<T, O>::Delete(T v) {
     Node *subRoot = getNodeAdress(v, root);
@@ -79,6 +82,11 @@ template <typename T, int O> void BStarTree<T, O>::print() const {
         }
         std::cout << std::endl << std::endl;
     }
+}
+
+/********************************************************/
+template <typename T, int O> bool BStarTree<T, O>::search(T v) const{
+    search(v, root);
 }
 
 /********************************************************/
