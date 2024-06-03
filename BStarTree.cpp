@@ -46,6 +46,7 @@ template <typename T, int O> void BStarTree<T, O>::empty() {
 /********************************************************/
 template <typename T, int O> void BStarTree<T, O>::Delete(T v) {
      Node *subRoot = getNodeAdress(v, root);
+     std::cout<<'i';
     if (subRoot == nullptr)
         return;
     if (!subRoot->isLeaf()) {
@@ -170,8 +171,8 @@ void BStarTree<T, O>::handleDeletion(Node *&subRoot) {
     bool hasRight = rightSibling != nullptr &&
                    rightSibling->numberOfKeys > rightSibling->minCapacity;
 
-    hasLeft ? lendToLeft(subRoot) : hasRight ? lendToRight(subRoot) : merge(subRoot);
-    if(subRoot->parent->numberOfKeys < subRoot->parent->minCapacity) handleDeletion(subRoot->parent);      
+    hasLeft ? lendToRight(subRoot->getLeftSibling()) : hasRight ? lendToLeft(subRoot->getRightSibling()) : merge(subRoot);
+    handleDeletion(subRoot->parent);      
 }
 
 /******************p**************************************/
@@ -468,10 +469,14 @@ BStarTree<T, O>::getNodeAdress(T &value, Node *&subRoot) const {
     for (i = 0; i < subRoot->numberOfKeys; ++i) {
         if (value == subRoot->keys[i])
             return subRoot;
+    }
+    if(subRoot->isLeaf()) return nullptr;
+    for(int i=0;i,subRoot->numberOfKeys;++i)
+    {
         if (value < subRoot->keys[i])
             return getNodeAdress(value, subRoot->children[i]);
     }
-    if (value > subRoot->keys[subRoot->numberOfKeys - 1] && !subRoot->isLeaf())
+    if (value > subRoot->keys[subRoot->numberOfKeys - 1])
         return getNodeAdress(value, subRoot->children[subRoot->numberOfKeys]);
     return nullptr;
 }
