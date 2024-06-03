@@ -182,6 +182,8 @@ void BStarTree<T, O>::handleDeletion(Node *&subRoot) {
 template <typename T, int O> void BStarTree<T, O>::lendToRight(Node *source) {
     // We store a reference to the parent's value that's to be used
     T valueInParent = source->parent->keys[source->parent->getChildIndex(source)];
+    //we store a reference to the sibling
+    Node *sibling=source->getRightSibling();
     // we store the index of the value
     int indexOfParentValue = source->parent->getKeyIndex(valueInParent);
     // puts the parent's value into the right sibling
@@ -191,6 +193,13 @@ template <typename T, int O> void BStarTree<T, O>::lendToRight(Node *source) {
         source->keys[source->numberOfKeys - 1];
     // removes the transferred value from the source
     source->removeKey(source->keys[source->numberOfKeys - 1]);
+    if(!source->isLeaf())
+    {
+        sibling->addChild(source->children[source->numberOfChildren-1],0);
+        source->children[source->numberOfChildren-1]->parent=sibling;
+        source->children[source->numberOfChildren-1]=nullptr;
+        --source->numberOfChildren;
+    }
 }
 /********************************************************/
 template <typename T, int O>
@@ -216,14 +225,23 @@ typename BStarTree<T, O>::Node *BStarTree<T, O>::Node::getLeftSibling() {
 template <typename T, int O> void BStarTree<T, O>::lendToLeft(Node *source) {
     // We store a reference to the parent's value that's to be used
     T valueInParent = source->parent->keys[source->parent->getChildIndex(source) -1];
+    //we store a reference to the sibling
+    Node *sibling=source->getLeftSibling();
     // we store the index of the value
     int indexOfParentValue = source->parent->getKeyIndex(valueInParent);
     // puts the parent's value into the left sibling
-    source->getLeftSibling()->addKey(valueInParent);
+    sibling->addKey(valueInParent);
     // changes the parent value
     source->parent->keys[indexOfParentValue] = source->keys[0];
     // removes the transferred value from the source
     source->removeKey(source->keys[0]);
+    if(!source->isLeaf())
+    {
+        sibling->addChild(source->children[0],sibling->numberOfChildren);
+        source->children[0]->parent=sibling;
+        source->children[0]=nullptr;
+        --source->numberOfChildren;
+    }
 }
 template <typename T, int O>
 typename BStarTree<T, O>::Node *BStarTree<T, O>::Node::getRightSibling() {
@@ -248,7 +266,6 @@ template <typename T, int O>
 void BStarTree<T, O>::split(Node *leftNode, Node *rightNode) {
     // We store a reference to the parent
     Node *parent = leftNode->parent;
-    std::cout<<parent<<'\n';
     // The keys's selection order will be keys from left node, key from parent and
     // keys from rgiht node We create the new nodes
     Node *n1 = new Node(parent);
@@ -335,55 +352,11 @@ void BStarTree<T, O>::split(Node *leftNode, Node *rightNode) {
             indexChildren++;
         }
     }
-    std::cout<<"\nPRINTING RESULTING NODES FROM SPLIT\n\n";
-    std::cout<<"\nKEYS IN FIRST NODE: "<<n1->numberOfKeys<<"\n";
-    for(int i=0;i<n1->numberOfKeys;++i)
-    {
-        std::cout<<n1->keys[i]<<", ";
-    }
-    std::cout<<"\nKEYS IN SECOND NODE: "<<n1->numberOfKeys<<"\n";
-    for(int i=0;i<n2->numberOfKeys;++i)
-    {
-        std::cout<<n2->keys[i]<<", ";
-    }
-    std::cout<<"\nKEYS IN THIRD NODE: "<<n1->numberOfKeys<<"\n";
-    for(int i=0;i<n3->numberOfKeys;++i)
-    {
-        std::cout<<n3->keys[i]<<", ";
-    }
     // We save the index of the leftmost node
     int leftIndex = parent->getChildIndex(leftNode);
-    std::cout<<leftIndex<<'\n';
-    std::cout<<"BEFORE CHANGES TO CHILDREN\n";
-    std::cout<<parent->numberOfKeys<<'\n';
-    std::cout<<parent->numberOfChildren<<'\n';
-    for(int i=0;i<parent->numberOfChildren;++i)
-    {
-        for(int j=0;j<parent->children[i]->numberOfKeys;++j)
-            std::cout<<parent->children[i]->keys[j]<<", ";
-        std::cout<<'\n';
-    }
     // we remove the current nodes from the parent
     parent->removeChild(leftNode);
-    std::cout<<"\n\nAFTER FIRST DELETION OF CHILDREN\n";
-    std::cout<<parent->numberOfKeys<<'\n';
-    std::cout<<parent->numberOfChildren<<'\n';
-    for(int i=0;i<parent->numberOfChildren;++i)
-    {
-        for(int j=0;j<parent->children[i]->numberOfKeys;++j)
-            std::cout<<parent->children[i]->keys[j]<<", ";
-        std::cout<<'\n';
-    }
     parent->removeChild(rightNode);
-    std::cout<<"\n\nAFTER DELETIONS OF CHILDREN\n";
-    std::cout<<parent->numberOfKeys<<'\n';
-    std::cout<<parent->numberOfChildren<<'\n';
-    for(int i=0;i<parent->numberOfChildren;++i)
-    {
-        for(int j=0;j<parent->children[i]->numberOfKeys;++j)
-            std::cout<<parent->children[i]->keys[j]<<", ";
-        std::cout<<'\n';
-    }
     // we add the new nodes to the parent
     parent->addChild(n3, leftIndex);
     parent->addChild(n2, leftIndex);
@@ -408,15 +381,6 @@ void BStarTree<T, O>::split(Node *leftNode, Node *rightNode) {
                 }
             }
         }
-    }
-     std::cout<<"\n\nEND RESULT\n";
-    std::cout<<parent->numberOfKeys<<'\n';
-    std::cout<<parent->numberOfChildren<<'\n';
-    for(int i=0;i<parent->numberOfChildren;++i)
-    {
-        for(int j=0;j<parent->children[i]->numberOfKeys;++j)
-            std::cout<<parent->children[i]->keys[j]<<", ";
-        std::cout<<'\n';
     }
 }
 
@@ -507,7 +471,7 @@ BStarTree<T, O>::getNodeAdress(T &value, Node *&subRoot) const {
     int i;
     for (i = 0; i < subRoot->numberOfKeys; ++i) {
         if (value == subRoot->keys[i])
-            return subRoot->children[i];
+            return subRoot;
         if (value < subRoot->keys[i])
             return getNodeAdress(value, subRoot->children[i]);
     }
@@ -716,7 +680,6 @@ template <typename T, int O> void BStarTree<T, O>::Node::addKey(const T &v) {
 /********************************************************/
 template <typename T, int O>
 void BStarTree<T, O>::Node::addChild(Node *child, int pos) {
-    // we can derive number of children from number of keys
     for (int i = numberOfChildren; i > pos; --i) {
         children[i] = children[i - 1];
     }
