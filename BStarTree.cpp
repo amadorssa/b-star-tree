@@ -554,7 +554,7 @@ template <typename T, int O> void BStarTree<T, O>::merge(Node *&n) {
         else if (i < size)
             aux_keys[i] = right->keys[i];
     }
-    Node *aux_left, *aux_right;
+    Node *aux_left(parent), *aux_right(parent);
     // Lleno los nuevos nodos con las llaves correspondientes
     for (int i = 0; i < size; ++i) {
         if (i < n->maxCapacity)
@@ -567,8 +567,7 @@ template <typename T, int O> void BStarTree<T, O>::merge(Node *&n) {
     // Empezamos a conectar los hijos de los nodos con los nuevos nodos
     Node *aux_children[(3 * n->minCapacity) + 1];
 
-    int child_size = (left->numberOfKeys + 1) + (n->numberOfKeys + 1) +
-                     (right->numberOfKeys + 1);
+    int child_size = (left->numberOfKeys + 1) + (n->numberOfKeys + 1) + (right->numberOfKeys + 1);
     for (int i = 0; i < child_size; ++i)
         if (i < left->numberOfKeys + 1)
             aux_children[i] = left->children[i];
