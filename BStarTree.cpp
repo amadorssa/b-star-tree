@@ -86,7 +86,7 @@ template <typename T, int O> void BStarTree<T, O>::print() const {
 
 /********************************************************/
 template <typename T, int O> bool BStarTree<T, O>::search(T v) const{
-    search(v, root);
+    return search(v, root);
 }
 
 /********************************************************/
@@ -154,7 +154,7 @@ template <typename T, int O>
 void BStarTree<T, O>::handleDeletion(Node *&subRoot) {
 
     // The easiest case.
-    if (subRoot->numberOfKeys >= subRoot->minCapacity)
+    if (subRoot->numberOfKeys >= subRoot->minCapacity || subRoot->numberOfKeys == 0)
         return;
     else {
         // Subcase when we can take a key from a sibling.
@@ -464,7 +464,7 @@ BStarTree<T, O>::getNodeAdress(T &value, Node *&subRoot) const {
     int i;
     for (i = 0; i < subRoot->numberOfKeys; ++i) {
         if (value == subRoot->keys[i])
-            return subRoot->children[i];
+            return subRoot;
         if (value < subRoot->keys[i])
             return getNodeAdress(value, subRoot->children[i]);
     }
