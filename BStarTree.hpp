@@ -22,7 +22,9 @@ private://attributes
     struct Node
       {   
           Node(Node *p);
+          ~Node();
           int numberOfKeys;
+          int numberOfChildren;
           int maxCapacity;
           int minCapacity;   
           T *keys;
