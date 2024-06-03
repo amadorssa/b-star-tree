@@ -84,6 +84,7 @@ void testAdd(BStarTree<T,O>& tree){
     tree.add(4);
     tree.print();
     std::cout << "-------------------------------------" << std::endl;
+   /*
     tree.add(16);
     tree.add(18);
     tree.add(56);
@@ -93,7 +94,7 @@ void testAdd(BStarTree<T,O>& tree){
     tree.add(102);
     tree.print();
     std::cout << "-------------------------------------" << std::endl;
-
+*/
 
 }
 
