@@ -266,7 +266,6 @@ void BStarTree<T, O>::split(Node *leftNode, Node *rightNode) {
         valuesToGive[indexValues] = rightNode->keys[i];
         indexValues++;
     }
-
     // we reset the index since we'll be needing it for the transfers to the new
     // nodes
     indexValues = 0;
@@ -328,12 +327,55 @@ void BStarTree<T, O>::split(Node *leftNode, Node *rightNode) {
             indexChildren++;
         }
     }
+    std::cout<<"\nPRINTING RESULTING NODES FROM SPLIT\n\n";
+    std::cout<<"\nKEYS IN FIRST NODE: "<<n1->numberOfKeys<<"\n";
+    for(int i=0;i<n1->numberOfKeys;++i)
+    {
+        std::cout<<n1->keys[i]<<", ";
+    }
+    std::cout<<"\nKEYS IN SECOND NODE: "<<n1->numberOfKeys<<"\n";
+    for(int i=0;i<n2->numberOfKeys;++i)
+    {
+        std::cout<<n2->keys[i]<<", ";
+    }
+    std::cout<<"\nKEYS IN THIRD NODE: "<<n1->numberOfKeys<<"\n";
+    for(int i=0;i<n3->numberOfKeys;++i)
+    {
+        std::cout<<n3->keys[i]<<", ";
+    }
     // We save the index of the leftmost node
     int leftIndex = parent->getChildIndex(leftNode);
     std::cout<<leftIndex<<'\n';
+    std::cout<<"BEFORE CHANGES TO CHILDREN\n";
+    std::cout<<parent->numberOfKeys<<'\n';
+    std::cout<<parent->numberOfChildren<<'\n';
+    for(int i=0;i<parent->numberOfChildren;++i)
+    {
+        for(int j=0;j<parent->children[i]->numberOfKeys;++j)
+            std::cout<<parent->children[i]->keys[j]<<", ";
+        std::cout<<'\n';
+    }
     // we remove the current nodes from the parent
     parent->removeChild(leftNode);
+    std::cout<<"\n\nAFTER FIRST DELETION OF CHILDREN\n";
+    std::cout<<parent->numberOfKeys<<'\n';
+    std::cout<<parent->numberOfChildren<<'\n';
+    for(int i=0;i<parent->numberOfChildren;++i)
+    {
+        for(int j=0;j<parent->children[i]->numberOfKeys;++j)
+            std::cout<<parent->children[i]->keys[j]<<", ";
+        std::cout<<'\n';
+    }
     parent->removeChild(rightNode);
+    std::cout<<"\n\nAFTER DELETIONS OF CHILDREN\n";
+    std::cout<<parent->numberOfKeys<<'\n';
+    std::cout<<parent->numberOfChildren<<'\n';
+    for(int i=0;i<parent->numberOfChildren;++i)
+    {
+        for(int j=0;j<parent->children[i]->numberOfKeys;++j)
+            std::cout<<parent->children[i]->keys[j]<<", ";
+        std::cout<<'\n';
+    }
     // we add the new nodes to the parent
     parent->addChild(n3, leftIndex);
     parent->addChild(n2, leftIndex);
@@ -359,6 +401,7 @@ void BStarTree<T, O>::split(Node *leftNode, Node *rightNode) {
             }
         }
     }
+     std::cout<<"\n\nEND RESULT\n";
     std::cout<<parent->numberOfKeys<<'\n';
     std::cout<<parent->numberOfChildren<<'\n';
     for(int i=0;i<parent->numberOfChildren;++i)
@@ -689,10 +732,10 @@ void BStarTree<T, O>::Node::removeChild(const Node *child) {
             break;
     }
     delete children[index];
-    for (index; index < numberOfChildren-1; ++index) {
-        children[index] == children[index + 1];
-    }
     --numberOfChildren;
+    for (index; index < numberOfChildren; ++index) {
+        children[index] = children[index + 1];
+    }
 }
 /********************************************************/
 template <typename T, int O>
