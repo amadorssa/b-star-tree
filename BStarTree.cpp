@@ -11,7 +11,7 @@ template <typename T, int O> BStarTree<T, O>::BStarTree() : numNodes(0) {
 }
 
 /********************************************************/
-template <typename T, int O> BStarTree<T, O>::~BStarTree() { empty(); }
+template <typename T, int O> BStarTree<T, O>::~BStarTree() { empty(root); }
 
 /********************************************************/
 template <typename T, int O>
