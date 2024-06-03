@@ -468,6 +468,7 @@ bool BStarTree<T, O>::search(T &value, const Node *subRoot) const {
         if (value == subRoot->keys[i])
             return true;
     }
+    if(subRoot->isLeaf()) return false;
     for(int i=0;i<subRoot->numberOfKeys;++i)
     {
         if (value < subRoot->keys[i])
@@ -514,7 +515,7 @@ void BStarTree<T, O>::copyNode(Node *&copy, const Node *source) {
 
     // copy the keys
     for (int i = 0; i < source->numberOfKeys; ++i) {
-        copy->values[i] = source->values[i];
+        copy->keys[i] = source->keys[i];
     }
 
     // copy the children
