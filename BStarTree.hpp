@@ -15,14 +15,17 @@ public:
     void Delete(T v);
     bool isEmpty() const;
     void empty();
-    void print() const;    
+    void print() const;
+    bool search(T v) const;
 
 private://attributes
   
     struct Node
       {   
           Node(Node *p);
+          ~Node();
           int numberOfKeys;
+          int numberOfChildren;
           int maxCapacity;
           int minCapacity;   
           T *keys;
@@ -42,6 +45,7 @@ private://attributes
           Node* getLeftSibling();
           Node* getRightSibling();
           Node*& biggestNode(Node *&subroot) const;
+          
       };
     Node *root;
     int numNodes;
