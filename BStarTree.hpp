@@ -44,8 +44,7 @@ private://attributes
           bool isOverloaded() const;
           Node* getLeftSibling();
           Node* getRightSibling();
-          Node*& biggestNode(Node *&subroot) const;
-          
+          Node*& biggestNode(Node *&subRoot) const;         
       };
     Node *root;
     int numNodes;
