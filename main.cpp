@@ -137,6 +137,9 @@ int main() {
         displayMenu();
         std::cin >> option;
         switch(option) {
+            case 0:
+                testAdd(tree);
+                break;
             case 1:
                 insertNode(tree);
                 break;

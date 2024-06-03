@@ -181,8 +181,16 @@ void BStarTree<T, O>::handleDeletion(Node *&subRoot) {
     } 
     else if(hasLeft) lendToRight(subRoot->getLeftSibling());
     else if(hasRight) lendToLeft(subRoot->getRightSibling());
-    else merge(subRoot);
-    handleDeletion(parent);      
+    else if(parent->isRoot())
+    {
+        merge(subRoot);
+        return;
+    }
+    else
+    {
+        merge(subRoot);
+        handleDeletion(parent);      
+    }
 }
 
 /******************p**************************************/
