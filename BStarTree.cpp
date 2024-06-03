@@ -62,6 +62,7 @@ template <typename T, int O> void BStarTree<T, O>::Delete(T v) {
 
 /********************************************************/
 template <typename T, int O> void BStarTree<T, O>::print() const {
+    if(root->numberOfKeys == 0 ) return ;
     Queue<Node *> q;
     q.enqueue(root);
     int level;
