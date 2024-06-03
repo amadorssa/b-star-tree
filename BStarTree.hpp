@@ -18,7 +18,6 @@ public:
      * \brief Default constructor
      * \details This constructor creates an empty B star tree.
      */
-    */
     BStarTree();
 
     /**
