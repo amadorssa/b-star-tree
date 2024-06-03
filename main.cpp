@@ -10,9 +10,8 @@ void displayMenu() {
     std::cout << "4. Exit" << std::endl;
 }
 
-
-void testAdd(){ 
-    BStarTree<int, 4> tree;
+template <typename T, int O>
+void testAdd(BStarTree<T,O>& tree){ 
     tree.add(7);
     tree.add(10);
     tree.add(23);
@@ -78,26 +77,34 @@ void testAdd(){
     tree.add(40);
     tree.print();
     std::cout << "-------------------------------------" << std::endl;
+    tree.add(9);
+    tree.add(13);
+    tree.add(2);
+    tree.add(3);
+    tree.add(4);
+    tree.print();
+    std::cout << "-------------------------------------" << std::endl;
+
 }
 
-template<typename T>
-void insertNode(BStarTree<T>& t) {
+template<typename T,int O>
+void insertNode(BStarTree<T, O>& t) {
     T value;
     std::cout << "Enter the value to insert: ";
     std::cin >> value;
     t.add(value);
 }
 
-template<typename T>
-void deleteNode(BStarTree<T>& t) {
+template<typename T, int O>
+void deleteNode(BStarTree<T, O>& t) {
     T value;
     std::cout << "Enter the value to delete: ";
     std::cin >> value;
     t.Delete(value);
 }
 
-template<typename T>
-void displayTree(const BStarTree<T>& t) {
+template<typename T, int O>
+void displayTree(const BStarTree<T, O>& t) {
     t.print();
 }
 
@@ -109,7 +116,7 @@ int main() {
         std::cin >> option;
         switch(option) {
             case 0:
-                testAdd();
+                testAdd(tree);
                 break;
             case 1:
                 insertNode(tree);
