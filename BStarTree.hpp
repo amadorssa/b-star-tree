@@ -314,4 +314,5 @@ private://methods
     void merge(Node *& n);
 };
 
+#include "BStarTree.tpp"
 #endif // B_STAR_TREE_HPP

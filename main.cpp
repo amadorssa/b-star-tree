@@ -1,5 +1,4 @@
 #include "BStarTree.hpp"
-#include "BStarTree.cpp"
 #include <iostream>
 
 void displayMenu() {
